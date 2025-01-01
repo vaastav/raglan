@@ -1,0 +1,129 @@
+package specrt
+
+import (
+	"context"
+	"fmt"
+	"log"
+	"os"
+	"os/exec"
+	"path/filepath"
+	"plugin"
+	"strings"
+)
+
+type SpecializationRuntime struct {
+	Filename       string
+	OriginalModule *plugin.Plugin
+	Pts            []*SpecPoint[any]
+	PtsMap         map[string]*SpecPoint[any]
+	GlobalFns      map[string]bool
+	PluginFile     string
+	OrigPluginFile string
+	Original       string
+	Trampoline     string
+	Counter        int
+	CallbackFns    []func() error
+}
+
+func NewSpecializationRuntime(ctx context.Context, filename string) (*SpecializationRuntime, error) {
+	spec_rt := &SpecializationRuntime{}
+	spec_rt.Filename = filename
+	spec_rt.PtsMap = make(map[string]*SpecPoint[any])
+	// Parse file to find specialization points!
+	points, err := parseOriginalModule(filename)
+	if err != nil {
+		return nil, err
+	}
+	global_fns := make(map[string]bool)
+	for _, pt := range points {
+		global_fns[pt.ParentFn] = true
+	}
+	spec_rt.GlobalFns = global_fns
+	log.Println("Found the following specialization points")
+	for _, pt := range points {
+		log.Println(pt.String())
+		spec_rt.PtsMap[pt.Name] = pt
+	}
+	outf, err := setupOriginalModule(filename, global_fns)
+	if err != nil {
+		return nil, err
+	}
+	spec_rt.Original = outf
+	trampoline, err := setupTrampolineModule(filename, global_fns)
+	if err != nil {
+		return nil, err
+	}
+	spec_rt.Trampoline = trampoline
+	specialized, err := setupSpecializedModule(filename, global_fns, points)
+	if err != nil {
+		return nil, err
+	}
+	plugin_file := filepath.Dir(outf) + "/module.so"
+	spec_rt.PluginFile = plugin_file
+	spec_rt.OrigPluginFile = plugin_file
+	err = buildModule(plugin_file, outf, trampoline, specialized)
+	if err != nil {
+		return nil, err
+	}
+	p, err := plugin.Open(plugin_file)
+	if err != nil {
+		return nil, err
+	}
+	spec_rt.Pts = points
+	spec_rt.OriginalModule = p
+	return spec_rt, nil
+}
+
+func buildModule(plugin_file string, orig_filename string, trampoline_filename string, spec_filename string) error {
+	cmd := exec.Command("go", "build", "-o", plugin_file, "-buildmode=plugin", orig_filename, trampoline_filename, spec_filename)
+	_, err := cmd.Output()
+	return err
+}
+
+func (srt *SpecializationRuntime) UpdatePlugin() error {
+	specialized, err := setupSpecializedModule(srt.Filename, srt.GlobalFns, srt.Pts)
+	if err != nil {
+		return err
+	}
+	//Clean up previous file
+	err = os.Remove(srt.PluginFile)
+	if err != nil {
+		return err
+	}
+	srt.Counter += 1
+	plugin_file := strings.ReplaceAll(srt.OrigPluginFile, "module.so", fmt.Sprintf("module_%d.so", srt.Counter))
+	srt.PluginFile = plugin_file
+	err = buildModule(plugin_file, srt.Original, srt.Trampoline, specialized)
+	if err != nil {
+		return err
+	}
+	p, err := plugin.Open(plugin_file)
+	if err != nil {
+		return err
+	}
+	srt.OriginalModule = p
+	for _, fn := range srt.CallbackFns {
+		err := fn()
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (srt *SpecializationRuntime) AddCallbackFn(fn func() error) {
+	srt.CallbackFns = append(srt.CallbackFns, fn)
+}
+
+func (srt *SpecializationRuntime) Lookup(fn_name string) (plugin.Symbol, error) {
+	orig_sym, err := srt.OriginalModule.Lookup(fn_name + "_Trampoline")
+	if err != nil {
+		return nil, err
+	}
+	return orig_sym, nil
+}
+
+func (srt *SpecializationRuntime) Specialize(name string, index int) {
+	pt := srt.PtsMap[name]
+	pt.Specialize(index)
+}
