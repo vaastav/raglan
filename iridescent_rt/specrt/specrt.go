@@ -14,8 +14,8 @@ import (
 type SpecializationRuntime struct {
 	Filename       string
 	OriginalModule *plugin.Plugin
-	Pts            []*SpecPoint[any]
-	PtsMap         map[string]*SpecPoint[any]
+	Pts            []*CompileTimeSpecPoint[any]
+	PtsMap         map[string]*CompileTimeSpecPoint[any]
 	GlobalFns      map[string]bool
 	PluginFile     string
 	OrigPluginFile string
@@ -28,7 +28,7 @@ type SpecializationRuntime struct {
 func NewSpecializationRuntime(ctx context.Context, filename string) (*SpecializationRuntime, error) {
 	spec_rt := &SpecializationRuntime{}
 	spec_rt.Filename = filename
-	spec_rt.PtsMap = make(map[string]*SpecPoint[any])
+	spec_rt.PtsMap = make(map[string]*CompileTimeSpecPoint[any])
 	// Parse file to find specialization points!
 	points, err := parseOriginalModule(filename)
 	if err != nil {

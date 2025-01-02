@@ -2,6 +2,8 @@ package autotune
 
 import (
 	"time"
+
+	"github.com/vaastav/iridescent/iridescent_rt/specrt"
 )
 
 // Configuration contains the mappings for the specialized value for each point.
@@ -24,16 +26,17 @@ type MeasurementFn func() Stats
 type ExplorationEngine struct {
 	CurConfig    uint64
 	Configs      map[uint64]*Configuration
-	SpecPoints   map[string]*SpecPoint[any]
+	SpecPoints   map[string]specrt.SpecializationPoint
 	ConfigScores map[uint64]uint64
 	Measure      MeasurementFn
 	Objective    ObjectiveFn
 	Dur          time.Duration
 	Period       time.Duration
 	Strat        Strategy
+	SpecRT       *specrt.SpecializationRuntime
 }
 
-func NewExplorationEngine(specpoints map[string]*SpecPoint[any], duration time.Duration, period time.Duration, strategy Strategy) *ExplorationEngine {
+func NewExplorationEngine(specpoints map[string]specrt.SpecializationPoint, duration time.Duration, period time.Duration, strategy Strategy, srt *specrt.SpecializationRuntime) *ExplorationEngine {
 	e := &ExplorationEngine{}
 	e.SpecPoints = specpoints
 	e.Configs = make(map[uint64]*Configuration)
@@ -42,6 +45,7 @@ func NewExplorationEngine(specpoints map[string]*SpecPoint[any], duration time.D
 	e.Dur = duration
 	e.Period = period
 	e.Strat = strategy
+	e.SpecRT = srt
 	return e
 }
 
@@ -79,16 +83,23 @@ func (e *ExplorationEngine) StartExploration() {
 	e.Finalize()
 }
 
-func (e *ExplorationEngine) SelectConfig(c *Configuration) {
+func (e *ExplorationEngine) SelectConfig(c *Configuration) error {
 	// Specialize the points to the best config
 	for name, idx := range c.Mappings {
 		sp := e.SpecPoints[name]
 		sp.Specialize(idx)
 	}
+	if e.SpecRT != nil {
+		err := e.SpecRT.UpdatePlugin()
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // Finalize specializes the specialization points once the exploration ends.
-func (e *ExplorationEngine) Finalize() {
+func (e *ExplorationEngine) Finalize() error {
 	// Select the best configuration
 	highest_idx := uint64(0)
 	highest_val := uint64(0)
@@ -99,7 +110,7 @@ func (e *ExplorationEngine) Finalize() {
 		}
 	}
 	chosen_config := e.Configs[highest_idx]
-	e.SelectConfig(chosen_config)
+	return e.SelectConfig(chosen_config)
 }
 
 func (e *ExplorationEngine) ResetExploration() {

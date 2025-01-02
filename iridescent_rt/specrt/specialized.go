@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-func setupSpecializedModule(filename string, global_fns map[string]bool, spec_points []*SpecPoint[any]) (string, error) {
+func setupSpecializedModule(filename string, global_fns map[string]bool, spec_points []*CompileTimeSpecPoint[any]) (string, error) {
 	fset := token.NewFileSet()
 	file, err := parser.ParseFile(fset, filename, nil, 0)
 	if err != nil {

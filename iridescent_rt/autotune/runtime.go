@@ -5,20 +5,23 @@ import (
 	"errors"
 	"fmt"
 	"time"
+
+	"github.com/vaastav/iridescent/iridescent_rt/specrt"
 )
 
 type IridescentRT struct {
-	AllPoints map[string]*SpecPoint[any]
+	AllPoints map[string]specrt.SpecializationPoint
 	ExpEngine *ExplorationEngine
+	SpecRT    *specrt.SpecializationRuntime
 }
 
 var rt *IridescentRT
 
-func NewIridescentRT(ctx context.Context, duration string, period string, strategy_name string) (*IridescentRT, error) {
+func NewIridescentRT(ctx context.Context, duration string, period string, strategy_name string, specialization_file string) (*IridescentRT, error) {
 	// Ensure only once initialization
 	if rt == nil {
 		rt = &IridescentRT{}
-		rt.AllPoints = make(map[string]*SpecPoint[any])
+		rt.AllPoints = make(map[string]specrt.SpecializationPoint)
 		dur, err := time.ParseDuration(duration)
 		if err != nil {
 			return nil, err
@@ -35,7 +38,15 @@ func NewIridescentRT(ctx context.Context, duration string, period string, strate
 		} else {
 			return nil, errors.New(fmt.Sprintf("Unknown strategy chosen: %s", strategy_name))
 		}
-		engine := NewExplorationEngine(rt.AllPoints, dur, per, strat)
+		if specialization_file != "" {
+			srt, err := specrt.NewSpecializationRuntime(ctx, specialization_file)
+			if err != nil {
+				return nil, err
+			}
+			rt.SpecRT = srt
+		}
+		// Specialization runtime will be nil if no target spec file is provided!
+		engine := NewExplorationEngine(rt.AllPoints, dur, per, strat, rt.SpecRT)
 		rt.ExpEngine = engine
 	}
 	return rt, nil
@@ -61,6 +72,6 @@ func (irid *IridescentRT) ResetExploration() {
 	rt.ExpEngine.ResetExploration()
 }
 
-func (irid *IridescentRT) RegisterSpecPoint(name string, sp *SpecPoint[any]) {
+func (irid *IridescentRT) RegisterKnob(name string, sp *specrt.KnobSpecPoint[any]) {
 	rt.AllPoints[name] = sp
 }

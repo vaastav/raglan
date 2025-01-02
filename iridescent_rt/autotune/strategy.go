@@ -1,6 +1,10 @@
 package autotune
 
-import "math/rand"
+import (
+	"math/rand"
+
+	"github.com/vaastav/iridescent/iridescent_rt/specrt"
+)
 
 type Strategy interface {
 	Name() string
@@ -9,12 +13,12 @@ type Strategy interface {
 }
 
 type LinearStrategy struct {
-	all_points map[string]*SpecPoint[any]
+	all_points map[string]specrt.SpecializationPoint
 	max_vals   map[string]int
 	cur_config *Configuration
 }
 
-func NewLinearStrategy(specpoints map[string]*SpecPoint[any]) *LinearStrategy {
+func NewLinearStrategy(specpoints map[string]specrt.SpecializationPoint) *LinearStrategy {
 	ls := &LinearStrategy{all_points: specpoints, max_vals: make(map[string]int)}
 	return ls
 }
@@ -25,7 +29,7 @@ func (ls *LinearStrategy) Name() string {
 
 func (ls *LinearStrategy) Init() {
 	for k, sp := range ls.all_points {
-		ls.max_vals[k] = len(sp.Values)
+		ls.max_vals[k] = sp.NumVals()
 	}
 }
 
@@ -47,12 +51,12 @@ func (ls *LinearStrategy) NextConfig() *Configuration {
 }
 
 type RandomStrategy struct {
-	all_points map[string]*SpecPoint[any]
+	all_points map[string]specrt.SpecializationPoint
 	max_vals   map[string]int
 	cur_config *Configuration
 }
 
-func NewRandomStrategy(specpoints map[string]*SpecPoint[any]) *RandomStrategy {
+func NewRandomStrategy(specpoints map[string]specrt.SpecializationPoint) *RandomStrategy {
 	rs := &RandomStrategy{all_points: specpoints, max_vals: make(map[string]int)}
 	return rs
 }
@@ -63,7 +67,7 @@ func (rs *RandomStrategy) Name() string {
 
 func (rs *RandomStrategy) Init() {
 	for k, sp := range rs.all_points {
-		rs.max_vals[k] = len(sp.Values)
+		rs.max_vals[k] = sp.NumVals()
 	}
 }
 

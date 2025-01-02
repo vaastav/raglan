@@ -10,7 +10,7 @@ import (
 type ParseSpecPointVisitor struct {
 	fset  *token.FileSet
 	curFn string
-	Pts   []*SpecPoint[any]
+	Pts   []*CompileTimeSpecPoint[any]
 	Fns   map[string]bool
 }
 
@@ -46,7 +46,7 @@ func (v *ParseSpecPointVisitor) Visit(n ast.Node) ast.Visitor {
 						values = append(values, arg_val)
 					}
 				}
-				pt := NewSpecPoint[any](arg_name, values)
+				pt := NewCompileTimeSpecPoint[any](arg_name, values)
 				pt.ParentFn = v.curFn
 				pt.IridType = pt_irid_type
 				pt.GoType = pt_go_type
@@ -61,8 +61,8 @@ func (v *ParseSpecPointVisitor) Visit(n ast.Node) ast.Visitor {
 	return v
 }
 
-func parseOriginalModule(filename string) ([]*SpecPoint[any], error) {
-	var points []*SpecPoint[any]
+func parseOriginalModule(filename string) ([]*CompileTimeSpecPoint[any], error) {
+	var points []*CompileTimeSpecPoint[any]
 	fset := token.NewFileSet()
 	file, err := parser.ParseFile(fset, filename, nil, 0)
 	if err != nil {
