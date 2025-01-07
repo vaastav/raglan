@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"errors"
+	"log"
 	"math/rand"
 
 	"github.com/vaastav/iridescent/iridescent_rt/autotune"
@@ -13,30 +14,44 @@ type MatrixMulService interface {
 }
 
 type MatrixMulServiceImpl struct {
-	MatMulFn func(a [][]int, b [][]int, c [][]int, n int, s int) error
+	MatMulFn      func(a [][]int, b [][]int, c [][]int, n int, s int) error
+	IsInitialized bool
 }
 
 func NewMatrixMulServiceImpl(ctx context.Context) (MatrixMulService, error) {
 	impl := &MatrixMulServiceImpl{}
-	update_fn := func() error {
-		srt := autotune.GetRuntime().SpecRT
-		mat_mul, err := srt.Lookup("MatrixMultiply")
-		if err != nil {
-			return err
-		}
-		var ok bool
-		impl.MatMulFn, ok = mat_mul.(func([][]int, [][]int, [][]int, int, int) error)
-		if !ok {
-			return errors.New("Failed to convert loaded symbol into desired type")
-		}
-		return nil
-	}
-	err := update_fn()
-	if err != nil {
-		return nil, err
-	}
-	autotune.GetRuntime().SpecRT.AddCallbackFn(update_fn)
 	return impl, nil
+}
+
+func (m *MatrixMulServiceImpl) init_service() {
+	initialized := false
+	for !initialized {
+		rt := autotune.GetRuntime()
+		if rt == nil {
+			continue
+		}
+		update_fn := func() error {
+			srt := autotune.GetRuntime().SpecRT
+			mat_mul, err := srt.Lookup("MatrixMultiply")
+			if err != nil {
+				return err
+			}
+			var ok bool
+			m.MatMulFn, ok = mat_mul.(func([][]int, [][]int, [][]int, int, int) error)
+			if !ok {
+				return errors.New("Failed to convert loaded symbol into desired type")
+			}
+			return nil
+		}
+		err := update_fn()
+		if err != nil {
+			log.Fatal(err)
+		}
+		rt.SpecRT.AddCallbackFn(update_fn)
+	}
+	log.Println("Service initialization complete")
+
+	m.IsInitialized = true
 }
 
 func (m *MatrixMulServiceImpl) MatrixMultiply(ctx context.Context, n int) error {

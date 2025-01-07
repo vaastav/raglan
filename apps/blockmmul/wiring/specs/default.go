@@ -1,6 +1,8 @@
 package specs
 
 import (
+	"strings"
+
 	"github.com/blueprint-uservices/blueprint/blueprint/pkg/wiring"
 	"github.com/blueprint-uservices/blueprint/plugins/cmdbuilder"
 	"github.com/blueprint-uservices/blueprint/plugins/goproc"
@@ -19,11 +21,12 @@ var Docker = cmdbuilder.SpecOption{
 }
 
 func makeDockerSpec(spec wiring.WiringSpec) ([]string, error) {
-	iridescent.AddIridescent(spec, "mmul_proc", "20s", "2s", "linear", "../workflow/guest/mmul.go")
 	applyDockerDefaults := func(spec wiring.WiringSpec, serviceName string) string {
+		proc_name := goproc.CreateProcess(spec, strings.ReplaceAll(serviceName, "_service", "_proc"))
+		iridescent.AddIridescent(spec, proc_name, "20s", "2s", "linear", "../workflow/guest/mmul.go")
 		healthchecker.AddHealthCheckAPI(spec, serviceName)
 		http.Deploy(spec, serviceName)
-		goproc.Deploy(spec, serviceName)
+		goproc.AddToProcess(spec, proc_name, serviceName)
 		return linuxcontainer.Deploy(spec, serviceName)
 	}
 
