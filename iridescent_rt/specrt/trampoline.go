@@ -49,6 +49,7 @@ func setupTrampolineModule(filename string, global_fns map[string]bool) (string,
 				new_body_fset := token.NewFileSet()
 				new_body_node, err := parser.ParseFile(new_body_fset, "trampoline.go", new_body, 0)
 				if err != nil {
+					log.Println(new_body)
 					log.Fatal(err)
 				}
 				var blkStmt *ast.BlockStmt
@@ -115,10 +116,18 @@ var trampoline_template = `
 package foo
 
 func dummy() {
+{{if .RetString}}
 {{.RetString}}, err := {{.Name}}_Specialized({{.ArgString}})
+{{else}}
+err := {{.Name}}_Specialized({{.ArgString}})
+{{end}}
 if err != nil {
 	return {{.Name}}_Original({{.ArgString}})
 }
+{{if .RetString}}
 return {{.RetString}}, err
+{{else}}
+return err
+{{end}}
 }
 `
