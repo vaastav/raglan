@@ -20,6 +20,7 @@ type MatrixMulServiceImpl struct {
 
 func NewMatrixMulServiceImpl(ctx context.Context) (MatrixMulService, error) {
 	impl := &MatrixMulServiceImpl{}
+	go impl.init_service()
 	return impl, nil
 }
 
