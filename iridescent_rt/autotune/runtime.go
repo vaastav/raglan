@@ -9,6 +9,11 @@ import (
 	"github.com/vaastav/iridescent/iridescent_rt/specrt"
 )
 
+type IridescentRTIface interface {
+	StartExploration(ctx context.Context) error
+	ResetExploration(ctx context.Context) error
+}
+
 type IridescentRT struct {
 	AllPoints map[string]specrt.SpecializationPoint
 	ExpEngine *ExplorationEngine
@@ -64,12 +69,14 @@ func (irid *IridescentRT) RegisterObjFn(obj ObjectiveFn) {
 	rt.ExpEngine.Objective = obj
 }
 
-func (irid *IridescentRT) StartExploration() {
+func (irid *IridescentRT) StartExploration(ctx context.Context) error {
 	go rt.ExpEngine.StartExploration()
+	return nil
 }
 
-func (irid *IridescentRT) ResetExploration() {
+func (irid *IridescentRT) ResetExploration(ctx context.Context) error {
 	rt.ExpEngine.ResetExploration()
+	return nil
 }
 
 func (irid *IridescentRT) RegisterKnob(name string, sp *specrt.KnobSpecPoint[any]) {

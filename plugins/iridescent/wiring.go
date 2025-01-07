@@ -12,7 +12,7 @@ func AddIridescent(spec wiring.WiringSpec, procName string, exploration_duration
 	// Initialize the Iridescent Runtime IR Node.
 
 	spec.Define(irid_name, &IridescentProcNode{}, func(ns wiring.Namespace) (ir.IRNode, error) {
-		return newIridescentRT(exploration_duration, monitoring_period, strategy, specialization_file)
+		return newIridescentRT(irid_name, exploration_duration, monitoring_period, strategy, specialization_file)
 	})
 
 	goproc.AddToProcess(spec, procName, irid_name)

@@ -80,9 +80,9 @@ func (handler * {{.Name}}) Objective(s Stats) uint64 {
 	return s.Values["tput"]
 }
 
-func (handler * {{.Name}}) IncrCounter() {
+func (handler * {{.Name}}) IncrCounter(ctx context.Context) {
 	if !handler.ExpStarted {
-		autotune.GetRuntime().StartExploration()
+		autotune.GetRuntime().StartExploration(ctx)
 		handler.ExpStarted = true
 	}
 	handler.Counter += 1
@@ -92,7 +92,7 @@ func (handler * {{.Name}}) IncrCounter() {
 {{$receiver := .Name -}}
 {{ range $_, $f := .Service.Methods }}
 func (handler *{{$receiver}}) {{$f.Name -}} ({{ArgVarsAndTypes $f "ctx context.Context"}}) ({{RetTypes $f "error"}}) {
-	handler.IncrCounter()
+	handler.IncrCounter(ctx)
 	return handler.Service.{{$f.Name}}({{ArgVars $f "ctx"}})
 }
 {{end}}

@@ -33,13 +33,14 @@ func (node *IridescentProcNode) String() string {
 	return node.Name() + " = IridescentProcNode()"
 }
 
-func newIridescentRT(duration string, period string, strategy_name string, spec_file_path string) (*IridescentProcNode, error) {
+func newIridescentRT(name string, duration string, period string, strategy_name string, spec_file_path string) (*IridescentProcNode, error) {
 	spec, err := workflowspec.GetService[*autotune.IridescentRT]()
 	if err != nil {
 		return nil, err
 	}
 
 	node := &IridescentProcNode{}
+	node.InstanceName = name
 	node.Spec = spec
 	node.Dur = duration
 	node.Period = period
