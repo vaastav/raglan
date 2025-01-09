@@ -33,6 +33,9 @@ func (m *MatrixMulServiceImpl) init_service() {
 		}
 		update_fn := func() error {
 			srt := autotune.GetRuntime().SpecRT
+			if srt == nil {
+				log.Println("Runtime is nil oops")
+			}
 			mat_mul, err := srt.Lookup("MatrixMultiply")
 			if err != nil {
 				return err

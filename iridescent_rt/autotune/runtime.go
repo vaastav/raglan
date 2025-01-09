@@ -25,8 +25,8 @@ var rt *IridescentRT
 func NewIridescentRT(ctx context.Context, duration string, period string, strategy_name string, specialization_file string) (*IridescentRT, error) {
 	// Ensure only once initialization
 	if rt == nil {
-		rt = &IridescentRT{}
-		rt.AllPoints = make(map[string]specrt.SpecializationPoint)
+		new_rt := &IridescentRT{}
+		new_rt.AllPoints = make(map[string]specrt.SpecializationPoint)
 		dur, err := time.ParseDuration(duration)
 		if err != nil {
 			return nil, err
@@ -37,9 +37,9 @@ func NewIridescentRT(ctx context.Context, duration string, period string, strate
 		}
 		var strat Strategy
 		if strategy_name == "linear" {
-			strat = NewLinearStrategy(rt.AllPoints)
+			strat = NewLinearStrategy(new_rt.AllPoints)
 		} else if strategy_name == "random" {
-			strat = NewRandomStrategy(rt.AllPoints)
+			strat = NewRandomStrategy(new_rt.AllPoints)
 		} else {
 			return nil, errors.New(fmt.Sprintf("Unknown strategy chosen: %s", strategy_name))
 		}
@@ -48,11 +48,12 @@ func NewIridescentRT(ctx context.Context, duration string, period string, strate
 			if err != nil {
 				return nil, err
 			}
-			rt.SpecRT = srt
+			new_rt.SpecRT = srt
 		}
 		// Specialization runtime will be nil if no target spec file is provided!
-		engine := NewExplorationEngine(rt.AllPoints, dur, per, strat, rt.SpecRT)
-		rt.ExpEngine = engine
+		engine := NewExplorationEngine(new_rt.AllPoints, dur, per, strat, new_rt.SpecRT)
+		new_rt.ExpEngine = engine
+		rt = new_rt
 	}
 	return rt, nil
 }

@@ -8,10 +8,10 @@ import (
 	"github.com/blueprint-uservices/blueprint/plugins/goproc"
 	"github.com/blueprint-uservices/blueprint/plugins/healthchecker"
 	"github.com/blueprint-uservices/blueprint/plugins/http"
-	"github.com/blueprint-uservices/blueprint/plugins/linuxcontainer"
 	"github.com/blueprint-uservices/blueprint/plugins/workflow"
 	"github.com/vaastav/iridescent/apps/blockmmul/workflow/services"
 	"github.com/vaastav/iridescent/plugins/iridescent"
+	"github.com/vaastav/iridescent/plugins/iridlinuxcontainer"
 )
 
 var Docker = cmdbuilder.SpecOption{
@@ -23,11 +23,11 @@ var Docker = cmdbuilder.SpecOption{
 func makeDockerSpec(spec wiring.WiringSpec) ([]string, error) {
 	applyDockerDefaults := func(spec wiring.WiringSpec, serviceName string) string {
 		proc_name := goproc.CreateProcess(spec, strings.ReplaceAll(serviceName, "_service", "_proc"))
-		iridescent.AddIridescent(spec, proc_name, "20s", "2s", "linear", "../workflow/guest/mmul.go")
+		iridescent.AddIridescent(spec, proc_name, "20s", "2s", "linear", "/src/"+proc_name+"/workflow/guest/mmul.go")
 		healthchecker.AddHealthCheckAPI(spec, serviceName)
 		http.Deploy(spec, serviceName)
 		goproc.AddToProcess(spec, proc_name, serviceName)
-		return linuxcontainer.Deploy(spec, serviceName)
+		return iridlinuxcontainer.Deploy(spec, serviceName)
 	}
 
 	mmul_service := workflow.Service[services.MatrixMulService](spec, "mmul_service")
