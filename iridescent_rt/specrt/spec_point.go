@@ -16,7 +16,7 @@ type SpecializationPoint interface {
 	NumVals() int
 }
 
-type CompileTimeSpecPoint[T comparable] struct {
+type CompileTimeSpecPoint[T any] struct {
 	Name          string
 	ParentFn      string
 	Values        []T
@@ -26,7 +26,7 @@ type CompileTimeSpecPoint[T comparable] struct {
 	IsSpecialized bool
 }
 
-func NewCompileTimeSpecPoint[T comparable](name string, values []T) *CompileTimeSpecPoint[T] {
+func NewCompileTimeSpecPoint[T any](name string, values []T) *CompileTimeSpecPoint[T] {
 	sp := &CompileTimeSpecPoint[T]{Name: name, Values: values}
 	return sp
 }
