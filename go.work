@@ -1,0 +1,13 @@
+go 1.22.1
+
+use (
+    ./apps/blockmmul/wiring
+    ./apps/blockmmul/workflow
+    ./apps/userservice/wiring
+    ./apps/userservice/workflow
+    ./apps/userservice/workload
+    ./examples
+    ./iridescent_rt
+    ./plugins
+    ./unit_tests
+)
