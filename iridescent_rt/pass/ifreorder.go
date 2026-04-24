@@ -11,14 +11,14 @@ type ReorderIfPass struct {
 	Orders map[string][]int
 }
 
-type ifBranch struct {
-	cond ast.Expr
-	body *ast.BlockStmt
-}
-
 func NewReorderIfPass() *ReorderIfPass {
 	rifp := &ReorderIfPass{Orders: make(map[string][]int)}
 	return rifp
+}
+
+type ifBranch struct {
+	cond ast.Expr
+	body *ast.BlockStmt
 }
 
 // --------------------
