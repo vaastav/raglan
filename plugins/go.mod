@@ -1,10 +1,6 @@
-module github.com/vaastav/iridescent/plugins
+module github.com/vaastav/raglan/plugins
 
 go 1.22.1
-
-require github.com/vaastav/iridescent/iridescent_rt v0.0.0
-
-replace github.com/vaastav/iridescent/iridescent_rt => ../iridescent_rt
 
 require (
 	github.com/blueprint-uservices/blueprint/blueprint v0.0.0-20241113113418-f54e1bbd9997

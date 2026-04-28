@@ -25,7 +25,7 @@ func generateServerHandler(builder golang.ModuleBuilder, wrapped_service *gocode
 		Imports:   gogen.NewImports(pkg.Name),
 	}
 
-	server.Imports.AddPackages("context", "time", "fmt", "github.com/vaastav/iridescent_rt/autotune")
+	server.Imports.AddPackages("context", "time", "fmt", "github.com/vaastav/raglan/iridescent_rt/autotune")
 
 	slog.Info(fmt.Sprintf("Generating %v/%v", server.Package.PackageName, wrapped_service.Name))
 	outputFile := filepath.Join(server.Package.Path, wrapped_service.Name+".go")

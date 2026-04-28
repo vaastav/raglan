@@ -1,9 +1,7 @@
-module github.com/vaastav/iridescent/examples
+module github.com/vaastav/raglan/examples
 
 go 1.22.1
 
-require github.com/vaastav/iridescent/iridescent_rt v0.0.0
-
-replace github.com/vaastav/iridescent/iridescent_rt => ../iridescent_rt
+require github.com/vaastav/raglan/iridescent_rt v0.0.0
 
 require gonum.org/v1/gonum v0.15.1

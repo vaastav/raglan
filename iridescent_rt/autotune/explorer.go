@@ -3,7 +3,7 @@ package autotune
 import (
 	"time"
 
-	"github.com/vaastav/iridescent/iridescent_rt/specrt"
+	"github.com/vaastav/raglan/iridescent_rt/specrt"
 )
 
 // Configuration contains the mappings for the specialized value for each point.

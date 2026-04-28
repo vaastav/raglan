@@ -26,7 +26,7 @@ func generateServerHandler(builder golang.ModuleBuilder, wrapped_service *gocode
 		Percentile: percentile,
 	}
 
-	server.Imports.AddPackages("context", "time", "fmt", "github.com/vaastav/iridescent_rt/autotune", "github.com/caio/go-tdigest/v5")
+	server.Imports.AddPackages("context", "time", "fmt", "github.com/vaastav/raglan/iridescent_rt/autotune", "github.com/caio/go-tdigest/v5")
 
 	slog.Info(fmt.Sprintf("Generating %v/%v", server.Package.PackageName, wrapped_service.Name))
 	outputFile := filepath.Join(server.Package.Path, wrapped_service.Name+".go")

@@ -12,7 +12,6 @@ replace github.com/vaastav/iridescent/plugins => ../../../plugins
 
 replace github.com/vaastav/iridescent/apps/userservice/workflow => ../workflow
 
-replace github.com/vaastav/iridescent/iridescent_rt => ../../../iridescent_rt
 
 require (
 	github.com/blueprint-uservices/blueprint/blueprint v0.0.0-20260314172942-77bfbde575a7

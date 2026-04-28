@@ -8,7 +8,7 @@ import (
 	"github.com/blueprint-uservices/blueprint/blueprint/pkg/ir"
 	"github.com/blueprint-uservices/blueprint/plugins/golang"
 	"github.com/blueprint-uservices/blueprint/plugins/workflow/workflowspec"
-	"github.com/vaastav/iridescent/iridescent_rt/autotune"
+	"github.com/vaastav/raglan/iridescent_rt/autotune"
 )
 
 type IridescentProcNode struct {
