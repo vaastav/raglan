@@ -5,7 +5,7 @@ import (
 	"log/slog"
 	"path/filepath"
 
-	"github.com/vaastav/iridescent/plugins/iridlinuxcontainer/linuxgen"
+	"github.com/vaastav/raglan/plugins/iridlinuxcontainer/linuxgen"
 )
 
 type Dockerfile struct {

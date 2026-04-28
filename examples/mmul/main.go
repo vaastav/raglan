@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/vaastav/iridescent/iridescent_rt/specrt"
+	"github.com/vaastav/raglan/iridescent_rt/specrt"
 )
 
 func main() {

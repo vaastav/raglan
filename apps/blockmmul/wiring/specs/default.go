@@ -9,9 +9,9 @@ import (
 	"github.com/blueprint-uservices/blueprint/plugins/healthchecker"
 	"github.com/blueprint-uservices/blueprint/plugins/http"
 	"github.com/blueprint-uservices/blueprint/plugins/workflow"
-	"github.com/vaastav/iridescent/apps/blockmmul/workflow/services"
-	"github.com/vaastav/iridescent/plugins/iridescent"
-	"github.com/vaastav/iridescent/plugins/iridlinuxcontainer"
+	"github.com/vaastav/raglan/apps/blockmmul/workflow/services"
+	"github.com/vaastav/raglan/plugins/iridescent"
+	"github.com/vaastav/raglan/plugins/iridlinuxcontainer"
 )
 
 var Docker = cmdbuilder.SpecOption{

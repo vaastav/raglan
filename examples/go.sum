@@ -1,3 +1,5 @@
+github.com/vaastav/raglan/iridescent_rt v0.0.0-20260428105604-0ea5820e202a h1:BnLAOs0X52HUP0AeMm10VWQKXdXSuj5QKGFaRUfVZ4U=
+github.com/vaastav/raglan/iridescent_rt v0.0.0-20260428105604-0ea5820e202a/go.mod h1:+zrmVNL27yo56zycHq73bVE8GaBdVVv70KQC6Mq7di0=
 golang.org/x/exp v0.0.0-20231110203233-9a3e6036ecaa h1:FRnLl4eNAQl8hwxVVC17teOw8kdjVDVAiFMtgUdTSRQ=
 golang.org/x/exp v0.0.0-20231110203233-9a3e6036ecaa/go.mod h1:zk2irFbV9DP96SEBUUAy67IdHUaZuSnrz1n472HUCLE=
 gonum.org/v1/gonum v0.15.1 h1:FNy7N6OUZVUaWG9pTiD+jlhdQ3lMP+/LcTpJ6+a8sQ0=

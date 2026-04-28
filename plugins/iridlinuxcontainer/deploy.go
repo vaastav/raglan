@@ -8,7 +8,7 @@ import (
 	"github.com/blueprint-uservices/blueprint/blueprint/pkg/blueprint/ioutil"
 	"github.com/blueprint-uservices/blueprint/blueprint/pkg/ir"
 	"github.com/blueprint-uservices/blueprint/plugins/linux"
-	"github.com/vaastav/iridescent/plugins/iridlinuxcontainer/linuxgen"
+	"github.com/vaastav/raglan/plugins/iridlinuxcontainer/linuxgen"
 )
 
 type (

@@ -5,7 +5,7 @@ import (
 	"log/slog"
 
 	"github.com/blueprint-uservices/blueprint/plugins/docker"
-	"github.com/vaastav/iridescent/plugins/iridlinuxcontainer/dockergen"
+	"github.com/vaastav/raglan/plugins/iridlinuxcontainer/dockergen"
 )
 
 type (

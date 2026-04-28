@@ -6,7 +6,7 @@ import (
 	"log"
 	"math/rand"
 
-	"github.com/vaastav/iridescent/iridescent_rt/autotune"
+	"github.com/vaastav/raglan/iridescent_rt/autotune"
 )
 
 type MatrixMulService interface {

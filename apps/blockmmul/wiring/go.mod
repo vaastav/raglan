@@ -2,17 +2,10 @@ module github.com/vaastav/iridescent/apps/blockmmul/wiring
 
 go 1.22.1
 
-require github.com/vaastav/iridescent/apps/blockmmul/workflow v0.0.0
+require github.com/vaastav/raglan/apps/blockmmul/workflow v0.0.0
 
-require github.com/vaastav/iridescent/iridescent_rt v0.0.0 // indirect
+replace github.com/vaastav/raglan/apps/blockmmul/workflow => ../workflow
 
-require github.com/vaastav/iridescent/plugins v0.0.0
-
-replace github.com/vaastav/iridescent/plugins => ../../../plugins
-
-replace github.com/vaastav/iridescent/apps/blockmmul/workflow => ../workflow
-
-replace github.com/vaastav/iridescent/iridescent_rt => ../../../iridescent_rt
 
 require (
 	github.com/blueprint-uservices/blueprint/blueprint v0.0.0-20241113113418-f54e1bbd9997
