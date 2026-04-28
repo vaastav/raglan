@@ -7,6 +7,7 @@ import (
 
 	"github.com/blueprint-uservices/blueprint/runtime/core/backend"
 	"github.com/vaastav/iridescent/iridescent_rt/autotune"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type Info struct {
@@ -30,6 +31,8 @@ func (i Info) remote() {}
 type UserService interface {
 	RegsiterUser(ctx context.Context, username string, fname string, lname string, password string, userID int64, email string, address string, country string) error
 	GetUserInfo(ctx context.Context, user User) (Info, error)
+	GetUserInfoHard1(ctx context.Context, user User) (Info, error)
+	GetUserInfoHard2(ctx context.Context, user User) (Info, error)
 }
 
 type UserServiceImpl struct {
@@ -129,4 +132,61 @@ func (u *UserServiceImpl) GetUserInfo(ctx context.Context, user User) (Info, err
 	}
 	// Make call into the guest code!
 	return u.Fn(ctx, u, user.Username)
+}
+
+func find_user_helper(ctx context.Context, db backend.NoSQLDatabase, username string) (Info, error) {
+	coll, err := db.GetCollection(ctx, "user", "user")
+	if err != nil {
+		return Info{}, err
+	}
+	query := bson.D{{"username", username}}
+	var info Info
+	res, err := coll.FindOne(ctx, query)
+	if err != nil {
+		return info, err
+	}
+	ok, err := res.One(ctx, &info)
+	if err != nil {
+		return info, err
+	}
+	if !ok {
+		return info, errors.New("Unable to deserialize database result!")
+	}
+	return info, nil
+}
+
+func (u *UserServiceImpl) GetUserInfoHard1(ctx context.Context, user User) (Info, error) {
+	username := user.Username
+	if info, err := find_user_helper(ctx, u.NaDB, username); err == nil {
+		return info, err
+	} else if info, err := find_user_helper(ctx, u.EuDB, username); err == nil {
+		return info, err
+	} else if info, err := find_user_helper(ctx, u.ApDB, username); err == nil {
+		return info, err
+	} else if info, err := find_user_helper(ctx, u.SaDB, username); err == nil {
+		return info, err
+	} else if info, err := find_user_helper(ctx, u.AfDB, username); err == nil {
+		return info, err
+	} else if info, err := find_user_helper(ctx, u.OcDB, username); err == nil {
+		return info, err
+	}
+	return Info{}, errors.New("User does not exist")
+}
+
+func (u *UserServiceImpl) GetUserInfoHard2(ctx context.Context, user User) (Info, error) {
+	username := user.Username
+	if info, err := find_user_helper(ctx, u.OcDB, username); err == nil {
+		return info, err
+	} else if info, err := find_user_helper(ctx, u.AfDB, username); err == nil {
+		return info, err
+	} else if info, err := find_user_helper(ctx, u.SaDB, username); err == nil {
+		return info, err
+	} else if info, err := find_user_helper(ctx, u.ApDB, username); err == nil {
+		return info, err
+	} else if info, err := find_user_helper(ctx, u.EuDB, username); err == nil {
+		return info, err
+	} else if info, err := find_user_helper(ctx, u.NaDB, username); err == nil {
+		return info, err
+	}
+	return Info{}, errors.New("User does not exist")
 }
