@@ -1,21 +1,19 @@
-module github.com/vaastav/iridescent/apps/userservice/wiring
+module github.com/vaastav/raglan/apps/userservice/wiring
 
 go 1.22.1
 
-require github.com/vaastav/iridescent/apps/userservice/workflow v0.0.0
+require github.com/vaastav/raglan/apps/userservice/workflow v0.0.0
 
-require github.com/vaastav/iridescent/iridescent_rt v0.0.0 // indirect
+replace github.com/vaastav/raglan/apps/userservice/workflow => ../workflow
 
-require github.com/vaastav/iridescent/plugins v0.0.0
+require github.com/vaastav/raglan/apps/userservice/workload v0.0.0
 
-replace github.com/vaastav/iridescent/plugins => ../../../plugins
-
-replace github.com/vaastav/iridescent/apps/userservice/workflow => ../workflow
-
+replace github.com/vaastav/raglan/apps/userservice/workload => ../workload
 
 require (
 	github.com/blueprint-uservices/blueprint/blueprint v0.0.0-20260314172942-77bfbde575a7
 	github.com/blueprint-uservices/blueprint/plugins v0.0.0-20260314172942-77bfbde575a7
+	github.com/vaastav/raglan/plugins v0.0.0-20260428122744-a06b6965a2ea
 )
 
 require (
@@ -27,6 +25,7 @@ require (
 	github.com/montanaflynn/stats v0.7.1 // indirect
 	github.com/otiai10/copy v1.14.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
+	github.com/vaastav/raglan/iridescent_rt v0.0.0-20260428122744-a06b6965a2ea // indirect
 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
 	github.com/xdg-go/scram v1.1.2 // indirect
 	github.com/xdg-go/stringprep v1.0.4 // indirect
@@ -46,4 +45,5 @@ require (
 	golang.org/x/sys v0.19.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 	golang.org/x/tools v0.20.0 // indirect
+	gonum.org/v1/gonum v0.15.1 // indirect
 )

@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/blueprint-uservices/blueprint/runtime/core/workload"
-	"github.com/vaastav/iridescent/apps/userservice/workflow"
+	"github.com/vaastav/raglan/apps/userservice/workflow"
 )
 
 // Workload specific flags

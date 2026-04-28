@@ -6,7 +6,7 @@ import (
 	"log"
 
 	"github.com/blueprint-uservices/blueprint/runtime/core/backend"
-	"github.com/vaastav/iridescent/iridescent_rt/autotune"
+	"github.com/vaastav/raglan/iridescent_rt/autotune"
 	"go.mongodb.org/mongo-driver/bson"
 )
 

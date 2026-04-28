@@ -1,4 +1,4 @@
-module github.com/vaastav/iridescent/apps/blockmmul/workflow
+module github.com/vaastav/raglan/apps/blockmmul/workflow
 
 go 1.22.1
 

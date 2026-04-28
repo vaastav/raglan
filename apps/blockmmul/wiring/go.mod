@@ -1,4 +1,4 @@
-module github.com/vaastav/iridescent/apps/blockmmul/wiring
+module github.com/vaastav/raglan/apps/blockmmul/wiring
 
 go 1.22.1
 
@@ -6,10 +6,10 @@ require github.com/vaastav/raglan/apps/blockmmul/workflow v0.0.0
 
 replace github.com/vaastav/raglan/apps/blockmmul/workflow => ../workflow
 
-
 require (
 	github.com/blueprint-uservices/blueprint/blueprint v0.0.0-20241113113418-f54e1bbd9997
 	github.com/blueprint-uservices/blueprint/plugins v0.0.0-20241113113418-f54e1bbd9997
+	github.com/vaastav/raglan/plugins v0.0.0-20260428122744-a06b6965a2ea
 )
 
 require (
@@ -17,6 +17,7 @@ require (
 	github.com/go-logr/logr v1.4.1 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/otiai10/copy v1.14.0 // indirect
+	github.com/vaastav/raglan/iridescent_rt v0.0.0-20260428105604-0ea5820e202a // indirect
 	go.mongodb.org/mongo-driver v1.15.0 // indirect
 	go.opentelemetry.io/otel v1.26.0 // indirect
 	go.opentelemetry.io/otel/exporters/stdout/stdoutmetric v1.26.0 // indirect

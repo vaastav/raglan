@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/blueprint-uservices/blueprint/plugins/cmdbuilder"
-	"github.com/vaastav/iridescent/apps/userservice/wiring/specs"
+	"github.com/vaastav/raglan/apps/userservice/wiring/specs"
 )
 
 func main() {

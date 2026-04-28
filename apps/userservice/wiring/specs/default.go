@@ -8,10 +8,10 @@ import (
 	"github.com/blueprint-uservices/blueprint/plugins/mongodb"
 	"github.com/blueprint-uservices/blueprint/plugins/workflow"
 	"github.com/blueprint-uservices/blueprint/plugins/workload"
-	wf "github.com/vaastav/iridescent/apps/userservice/workflow"
-	"github.com/vaastav/iridescent/apps/userservice/workload/workloadgen"
-	"github.com/vaastav/iridescent/plugins/iridescent"
-	"github.com/vaastav/iridescent/plugins/iridlinuxcontainer"
+	wf "github.com/vaastav/raglan/apps/userservice/workflow"
+	"github.com/vaastav/raglan/apps/userservice/workload/workloadgen"
+	"github.com/vaastav/raglan/plugins/iridescent"
+	"github.com/vaastav/raglan/plugins/iridlinuxcontainer"
 )
 
 var Default = cmdbuilder.SpecOption{

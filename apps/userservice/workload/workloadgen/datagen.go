@@ -3,7 +3,7 @@ package workloadgen
 import (
 	"math/rand/v2"
 
-	"github.com/vaastav/iridescent/apps/userservice/workflow"
+	"github.com/vaastav/raglan/apps/userservice/workflow"
 )
 
 var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
