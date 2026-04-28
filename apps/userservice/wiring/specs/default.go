@@ -7,7 +7,9 @@ import (
 	"github.com/blueprint-uservices/blueprint/plugins/http"
 	"github.com/blueprint-uservices/blueprint/plugins/mongodb"
 	"github.com/blueprint-uservices/blueprint/plugins/workflow"
+	"github.com/blueprint-uservices/blueprint/plugins/workload"
 	wf "github.com/vaastav/iridescent/apps/userservice/workflow"
+	"github.com/vaastav/iridescent/apps/userservice/workload/workloadgen"
 	"github.com/vaastav/iridescent/plugins/iridescent"
 	"github.com/vaastav/iridescent/plugins/iridlinuxcontainer"
 )
@@ -39,6 +41,9 @@ func makeDefaultSpec(spec wiring.WiringSpec) ([]string, error) {
 
 	ctr := applyHTTPDefaults(spec, user_service, "user_proc", "user_ctr")
 	services = append(services, ctr)
+
+	wlgen := workload.Generator[workloadgen.MultiWorkload](spec, "wlgen", user_service)
+	services = append(services, wlgen)
 
 	return services, nil
 }

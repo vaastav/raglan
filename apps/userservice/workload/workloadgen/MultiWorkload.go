@@ -163,6 +163,6 @@ func (w *multiWldGen) Run(ctx context.Context) error {
 	return nil
 }
 
-func (w *multiWldGen) ImplementsComplexWorkload(context.Context) error {
+func (w *multiWldGen) ImplementsMultiWorkload(context.Context) error {
 	return nil
 }

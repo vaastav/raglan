@@ -9,7 +9,6 @@ require (
 
 require (
 	github.com/pkg/errors v0.9.1 // indirect
-	github.com/vaastav/iridescent/iridescent_rt v0.0.0 // indirect
 	go.mongodb.org/mongo-driver v1.15.0 // indirect
 	go.opentelemetry.io/otel v1.26.0 // indirect
 	go.opentelemetry.io/otel/metric v1.26.0 // indirect
@@ -20,4 +19,3 @@ require (
 
 replace github.com/vaastav/iridescent/apps/userservice/workflow => ../workflow
 
-replace github.com/vaastav/iridescent/iridescent_rt => ../../../iridescent_rt
