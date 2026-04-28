@@ -10,6 +10,13 @@ import (
 	"strings"
 )
 
+func isIridescentAnnotationCallExpr(expr *ast.CallExpr) bool {
+	if ident, ok := expr.Fun.(*ast.Ident); ok && strings.HasPrefix(ident.Name, "iridescent") {
+		return true
+	}
+	return false
+}
+
 func setupSpecializedModule(filename string, global_fns map[string]bool, spec_points []*CompileTimeSpecPoint[any]) (string, error) {
 	fset := token.NewFileSet()
 	file, err := parser.ParseFile(fset, filename, nil, 0)
@@ -27,10 +34,19 @@ func setupSpecializedModule(filename string, global_fns map[string]bool, spec_po
 						var keepStmt = true
 						for _, rhs := range s.Rhs {
 							if callExpr, ok := rhs.(*ast.CallExpr); ok {
-								if ident, ok := callExpr.Fun.(*ast.Ident); ok && strings.HasPrefix(ident.Name, "iridescent") {
+								if isIridescentAnnotationCallExpr(callExpr) {
 									keepStmt = false
-									break
 								}
+							}
+						}
+						if keepStmt {
+							newStatements = append(newStatements, stmt)
+						}
+					case *ast.ExprStmt:
+						var keepStmt = true
+						if callExpr, ok := s.X.(*ast.CallExpr); ok {
+							if isIridescentAnnotationCallExpr(callExpr) {
+								keepStmt = false
 							}
 						}
 						if keepStmt {

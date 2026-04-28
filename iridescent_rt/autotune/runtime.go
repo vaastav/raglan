@@ -83,3 +83,7 @@ func (irid *IridescentRT) ResetExploration(ctx context.Context) error {
 func (irid *IridescentRT) RegisterKnob(name string, sp *specrt.KnobSpecPoint[any]) {
 	rt.AllPoints[name] = sp
 }
+
+func (irid *IridescentRT) RegisterCompileTimeSpecPoint(name string, sp *specrt.CompileTimeSpecPoint[any]) {
+	rt.AllPoints[name] = sp
+}

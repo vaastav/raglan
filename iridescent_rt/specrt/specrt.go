@@ -127,3 +127,9 @@ func (srt *SpecializationRuntime) Specialize(name string, index int) {
 	pt := srt.PtsMap[name]
 	pt.Specialize(index)
 }
+
+func (srt *SpecializationRuntime) Instrument(name string, key int) {
+	if pt, ok := srt.PtsMap[name]; ok {
+		pt.Incr(key)
+	}
+}

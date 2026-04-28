@@ -7,6 +7,8 @@ import (
 	"go/token"
 	"os"
 	"strings"
+
+	"golang.org/x/tools/go/ast/astutil"
 )
 
 func setupOriginalModule(filename string, global_fns map[string]bool) (string, error) {
@@ -27,7 +29,7 @@ func setupOriginalModule(filename string, global_fns map[string]bool) (string, e
 			// Iterate over the right-hand side of the assignment
 			for i, rhsExpr := range assignStmt.Rhs {
 				if callExpr, ok := rhsExpr.(*ast.CallExpr); ok {
-					if ident, ok := callExpr.Fun.(*ast.Ident); ok && strings.HasPrefix(ident.Name, "iridescent") {
+					if isIridescentAnnotationCallExpr(callExpr) {
 						if len(assignStmt.Lhs) > i {
 							if lhsIdent, ok := assignStmt.Lhs[i].(*ast.Ident); ok {
 								assignStmt.Rhs[i] = &ast.Ident{Name: lhsIdent.Name}
@@ -39,6 +41,25 @@ func setupOriginalModule(filename string, global_fns map[string]bool) (string, e
 		}
 		return true
 	})
+	astutil.Apply(file, func(c *astutil.Cursor) bool {
+		node := c.Node()
+
+		exprStmt, ok := node.(*ast.ExprStmt)
+		if !ok {
+			return true
+		}
+
+		call, ok := exprStmt.X.(*ast.CallExpr)
+		if !ok {
+			return true
+		}
+
+		if isIridescentAnnotationCallExpr(call) {
+			c.Delete()
+		}
+
+		return true
+	}, nil)
 	new_file := strings.ReplaceAll(filename, ".go", "_original.go")
 	f, err := os.Create(new_file)
 	defer f.Close()

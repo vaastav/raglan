@@ -1,6 +1,9 @@
 package specrt
 
-import "fmt"
+import (
+	"fmt"
+	"sync"
+)
 
 type SpecPointEnum int
 
@@ -16,7 +19,7 @@ type SpecializationPoint interface {
 	NumVals() int
 }
 
-type CompileTimeSpecPoint[T any] struct {
+type CompileTimeSpecPoint[T comparable] struct {
 	Name          string
 	ParentFn      string
 	Values        []T
@@ -24,11 +27,28 @@ type CompileTimeSpecPoint[T any] struct {
 	IridType      string
 	GoType        string
 	IsSpecialized bool
+	Counter       []uint64
+	sync.Mutex
 }
 
-func NewCompileTimeSpecPoint[T any](name string, values []T) *CompileTimeSpecPoint[T] {
-	sp := &CompileTimeSpecPoint[T]{Name: name, Values: values}
+func NewCompileTimeSpecPoint[T comparable](name string, values []T) *CompileTimeSpecPoint[T] {
+	sp := &CompileTimeSpecPoint[T]{Name: name, Values: values, Counter: make([]uint64, len(values))}
+	for idx, _ := range sp.Counter {
+		sp.Counter[idx] = 0
+	}
 	return sp
+}
+
+func (sp *CompileTimeSpecPoint[T]) Incr(key int) {
+	sp.Counter[key] = sp.Counter[key] + 1
+}
+
+func (sp *CompileTimeSpecPoint[T]) ResetStats() {
+	sp.Lock()
+	for k, _ := range sp.Counter {
+		sp.Counter[k] = 0
+	}
+	sp.Unlock()
 }
 
 func (sp *CompileTimeSpecPoint[T]) String() string {
