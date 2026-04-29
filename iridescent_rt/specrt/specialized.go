@@ -19,7 +19,7 @@ func isIridescentAnnotationCallExpr(expr *ast.CallExpr) bool {
 
 func (srt *SpecializationRuntime) setupSpecializedModule(filename string) (string, error) {
 	fset := token.NewFileSet()
-	file, err := parser.ParseFile(fset, filename, nil, 0)
+	file, err := parser.ParseFile(fset, filename, nil, parser.ParseComments)
 	if err != nil {
 		return "", err
 	}

@@ -11,11 +11,13 @@ import (
 	"os"
 	"strings"
 	"text/template"
+
+	"golang.org/x/tools/imports"
 )
 
 func setupTrampolineModule(filename string, global_fns map[string]bool) (string, error) {
 	fset := token.NewFileSet()
-	file, err := parser.ParseFile(fset, filename, nil, 0)
+	file, err := parser.ParseFile(fset, filename, nil, parser.ParseComments)
 	if err != nil {
 		return "", err
 	}
@@ -73,16 +75,34 @@ func setupTrampolineModule(filename string, global_fns map[string]bool) (string,
 		return true
 	})
 	var decls []ast.Decl
-	file.Decls = decls
+	// Keep the imports
+	for _, decl := range file.Decls {
+		if gen, ok := decl.(*ast.GenDecl); ok && gen.Tok == token.IMPORT {
+			decls = append(decls, gen)
+		}
+	}
 	for _, decl := range trampoline_fns {
-		file.Decls = append(file.Decls, decl)
+		decls = append(decls, decl)
+	}
+	file.Decls = decls
+
+	var buf bytes.Buffer
+	err = printer.Fprint(&buf, fset, file)
+	if err != nil {
+		return "", err
 	}
 
 	new_file := strings.ReplaceAll(filename, ".go", "_trampoline.go")
+	// Run goimports logic
+	out, err := imports.Process(new_file, buf.Bytes(), nil)
+	if err != nil {
+		return "", err
+	}
+
 	f, err := os.Create(new_file)
 	defer f.Close()
-	err = printer.Fprint(f, fset, file)
-	return new_file, nil
+	_, err = f.Write(out)
+	return new_file, err
 }
 
 type templateExecutor struct {

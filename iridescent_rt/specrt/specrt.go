@@ -50,16 +50,19 @@ func NewSpecializationRuntime(ctx context.Context, filename string) (*Specializa
 	spec_rt.Pts = points
 	outf, err := setupOriginalModule(filename, global_fns)
 	if err != nil {
+		log.Println("Failed to setup original module")
 		return nil, err
 	}
 	spec_rt.Original = outf
 	trampoline, err := setupTrampolineModule(filename, global_fns)
 	if err != nil {
+		log.Println("Failed to setup trampoline module")
 		return nil, err
 	}
 	spec_rt.Trampoline = trampoline
 	specialized, err := spec_rt.setupSpecializedModule(filename)
 	if err != nil {
+		log.Println("Failed to setup specialized module")
 		return nil, err
 	}
 	plugin_file := filepath.Dir(outf) + "/module.so"
@@ -67,10 +70,12 @@ func NewSpecializationRuntime(ctx context.Context, filename string) (*Specializa
 	spec_rt.OrigPluginFile = plugin_file
 	err = buildModule(plugin_file, outf, trampoline, specialized)
 	if err != nil {
+		log.Println("Failed to build module")
 		return nil, err
 	}
 	p, err := plugin.Open(plugin_file)
 	if err != nil {
+		log.Println("Failed to open the built plugin")
 		return nil, err
 	}
 	spec_rt.OriginalModule = p

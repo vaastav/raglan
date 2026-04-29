@@ -1,6 +1,7 @@
 package specrt
 
 import (
+	"bytes"
 	"go/ast"
 	"go/parser"
 	"go/printer"
@@ -9,11 +10,12 @@ import (
 	"strings"
 
 	"golang.org/x/tools/go/ast/astutil"
+	"golang.org/x/tools/imports"
 )
 
 func setupOriginalModule(filename string, global_fns map[string]bool) (string, error) {
 	fset := token.NewFileSet()
-	file, err := parser.ParseFile(fset, filename, nil, 0)
+	file, err := parser.ParseFile(fset, filename, nil, parser.ParseComments)
 	if err != nil {
 		return "", err
 	}
@@ -73,8 +75,21 @@ func setupOriginalModule(filename string, global_fns map[string]bool) (string, e
 		return true
 	}, nil)
 	new_file := strings.ReplaceAll(filename, ".go", "_original.go")
+
+	var buf bytes.Buffer
+	err = printer.Fprint(&buf, fset, file)
+	if err != nil {
+		return "", err
+	}
+
+	// Run imports logic
+	out, err := imports.Process(new_file, buf.Bytes(), nil)
+	if err != nil {
+		return "", err
+	}
+
 	f, err := os.Create(new_file)
 	defer f.Close()
-	err = printer.Fprint(f, fset, file)
+	_, err = f.Write(out)
 	return new_file, nil
 }

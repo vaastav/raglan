@@ -79,7 +79,7 @@ func (v *ParseSpecPointVisitor) Visit(n ast.Node) ast.Visitor {
 func parseOriginalModule(filename string) ([]*CompileTimeSpecPoint[any], error) {
 	var points []*CompileTimeSpecPoint[any]
 	fset := token.NewFileSet()
-	file, err := parser.ParseFile(fset, filename, nil, 0)
+	file, err := parser.ParseFile(fset, filename, nil, parser.ParseComments)
 	if err != nil {
 		return points, err
 	}
