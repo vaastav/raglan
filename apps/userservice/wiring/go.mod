@@ -25,7 +25,7 @@ require (
 	github.com/montanaflynn/stats v0.7.1 // indirect
 	github.com/otiai10/copy v1.14.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
-	github.com/vaastav/raglan/iridescent_rt v0.0.0-20260428122744-a06b6965a2ea // indirect
+	github.com/vaastav/raglan/iridescent_rt v0.0.0-20260429200748-326f7dadc8fa // indirect
 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
 	github.com/xdg-go/scram v1.1.2 // indirect
 	github.com/xdg-go/stringprep v1.0.4 // indirect

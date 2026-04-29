@@ -5,7 +5,7 @@ go 1.22.1
 require (
 	github.com/blueprint-uservices/blueprint/blueprint v0.0.0-20241113113418-f54e1bbd9997
 	github.com/blueprint-uservices/blueprint/plugins v0.0.0-20241113113418-f54e1bbd9997
-	github.com/vaastav/raglan/iridescent_rt v0.0.0-20260428105604-0ea5820e202a
+	github.com/vaastav/raglan/iridescent_rt v0.0.0-20260429200748-326f7dadc8fa
 )
 
 require (
