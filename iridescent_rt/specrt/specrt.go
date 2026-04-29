@@ -88,7 +88,7 @@ func (srt *SpecializationRuntime) buildModule(plugin_file string, orig_filename 
 	f, err := os.Create(version_filename)
 	defer f.Close()
 	f.WriteString(fmt.Sprintf("package main\n\nvar version string=\"v%d\"\n", srt.Counter))
-	cmd := exec.Command("go", "build", "-o", plugin_file, "-buildmode=plugin", orig_filename, trampoline_filename, spec_filename)
+	cmd := exec.Command("go", "build", "-o", plugin_file, "-buildmode=plugin", orig_filename, trampoline_filename, spec_filename, version_filename)
 	cmd.Dir = filepath.Dir(plugin_file)
 	out, err := cmd.CombinedOutput()
 	res := string(out)
