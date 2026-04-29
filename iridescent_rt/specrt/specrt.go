@@ -73,6 +73,7 @@ func NewSpecializationRuntime(ctx context.Context, filename string) (*Specializa
 		log.Println("Failed to build module with error: ", err)
 		return nil, err
 	}
+	log.Println("Loading plugin:", plugin_file)
 	p, err := plugin.Open(plugin_file)
 	if err != nil {
 		log.Println("Failed to open the built plugin")
@@ -84,6 +85,7 @@ func NewSpecializationRuntime(ctx context.Context, filename string) (*Specializa
 
 func buildModule(plugin_file string, orig_filename string, trampoline_filename string, spec_filename string) error {
 	cmd := exec.Command("go", "build", "-o", plugin_file, "-buildmode=plugin", orig_filename, trampoline_filename, spec_filename)
+	cmd.Dir = filepath.Dir(plugin_file)
 	out, err := cmd.CombinedOutput()
 	res := string(out)
 	if res != "" {
@@ -109,6 +111,7 @@ func (srt *SpecializationRuntime) UpdatePlugin() error {
 	if err != nil {
 		return err
 	}
+	log.Println("Loading plugin:", plugin_file)
 	p, err := plugin.Open(plugin_file)
 	if err != nil {
 		return err
