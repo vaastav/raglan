@@ -17,6 +17,18 @@ func setupOriginalModule(filename string, global_fns map[string]bool) (string, e
 	if err != nil {
 		return "", err
 	}
+
+	var newDecls []ast.Decl
+	for _, decl := range file.Decls {
+		if fn, ok := decl.(*ast.FuncDecl); ok {
+			if _, ok2 := global_fns[fn.Name.Name]; ok2 {
+				newDecls = append(newDecls, decl)
+			}
+		} else {
+			newDecls = append(newDecls, decl)
+		}
+	}
+	file.Decls = newDecls
 	// Modify the AST to delete function calls to iridescent instrumentation function
 	// Currently, these are replaced by the identifier itself
 	ast.Inspect(file, func(n ast.Node) bool {
