@@ -90,6 +90,7 @@ func (u *UserServiceImpl) init_service() {
 		rt.SpecRT.AddSpecializationPass(p)
 		go u.Policy()
 		u.Pass = p
+		initialized = true
 	}
 	log.Println("Service initialization complete")
 	u.IsInitialized = true

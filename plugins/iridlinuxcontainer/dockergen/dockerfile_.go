@@ -60,7 +60,7 @@ var dockerfileTemplate = `# syntax=docker/dockerfile:1
 # Step 2: prepare the final image
 ###
 
-FROM golang:1.22-bookworm
+FROM golang:1.24-bookworm
 
 # Copy artifacts for processes that didn't have custom build commands
 {{range $ProcName, $_ := .DefaultProcs -}}
