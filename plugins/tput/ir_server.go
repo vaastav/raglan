@@ -1,11 +1,8 @@
 package tput
 
 import (
-	"errors"
 	"fmt"
-	"path/filepath"
 	"reflect"
-	"runtime"
 
 	"github.com/blueprint-uservices/blueprint/blueprint/pkg/coreplugins/service"
 	"github.com/blueprint-uservices/blueprint/blueprint/pkg/ir"
@@ -66,19 +63,6 @@ func (node *TputServerWrapper) GenerateFuncs(builder golang.ModuleBuilder) error
 		return err
 	}
 	return nil
-}
-
-func (node *TputServerWrapper) AddToWorkspace(builder golang.WorkspaceBuilder) error {
-	// Add iridescent runtime to the workspace
-	_, filename, _, ok := runtime.Caller(0)
-	if !ok {
-		return errors.New("unable to get the current filename")
-	}
-	dirname := filepath.Dir(filename)
-	runtime_path := filepath.Join(dirname, "..", "..", "iridescent_rt")
-	runtime_path = filepath.Clean(runtime_path)
-	_, err := builder.AddLocalModule("iridescent_rt", runtime_path)
-	return err
 }
 
 func (node *TputServerWrapper) AddInstantiation(builder golang.NamespaceBuilder) error {

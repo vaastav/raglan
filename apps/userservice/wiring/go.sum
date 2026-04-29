@@ -29,12 +29,10 @@ github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZb
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/stretchr/testify v1.11.1 h1:7s2iGBzp5EwR7/aIZr8ao5+dra3wiQyKjjFuvgVKu7U=
 github.com/stretchr/testify v1.11.1/go.mod h1:wZwfW3scLgRK+23gO65QZefKpKQRnfz6sD981Nm4B6U=
-github.com/vaastav/raglan/iridescent_rt v0.0.0-20260428122744-a06b6965a2ea h1:cBjOUEYnz7vchWsnNdQBrl0EhIOLNIcS9gvb5D1I1jI=
-github.com/vaastav/raglan/iridescent_rt v0.0.0-20260428122744-a06b6965a2ea/go.mod h1:+zrmVNL27yo56zycHq73bVE8GaBdVVv70KQC6Mq7di0=
 github.com/vaastav/raglan/iridescent_rt v0.0.0-20260429200748-326f7dadc8fa h1:USgxfSmPLqCfFw16IoNibYnSuCWhlO+/zEFMtLYvK7c=
 github.com/vaastav/raglan/iridescent_rt v0.0.0-20260429200748-326f7dadc8fa/go.mod h1:+zrmVNL27yo56zycHq73bVE8GaBdVVv70KQC6Mq7di0=
-github.com/vaastav/raglan/plugins v0.0.0-20260428122744-a06b6965a2ea h1:l/2zCVymXWABT7/f1vFZ/hV7b9Sar78pDINGqlvdjUU=
-github.com/vaastav/raglan/plugins v0.0.0-20260428122744-a06b6965a2ea/go.mod h1:lRx2imMbOLadkIC2mTJGS7KDsvm/Q7I9BULCiYsjJTo=
+github.com/vaastav/raglan/plugins v0.0.0-20260429213125-ce5069d4908b h1:JCS44d5+2IeXQCrms+TeKSY2G0nNLTBAGUoQNtt/yxA=
+github.com/vaastav/raglan/plugins v0.0.0-20260429213125-ce5069d4908b/go.mod h1:RVtSyg5WSBvnGWLryChffRG1yx6gf8xTvi0a5exnh0I=
 github.com/xdg-go/pbkdf2 v1.0.0 h1:Su7DPu48wXMwC3bs7MCNG+z4FhcyEuz5dlvchbq0B0c=
 github.com/xdg-go/pbkdf2 v1.0.0/go.mod h1:jrpuAogTd400dnrH08LKmI/xc1MbPOebTwRqcT5RDeI=
 github.com/xdg-go/scram v1.1.2 h1:FHX5I5B4i4hKRVRBCFRxq1iQRej7WO3hhBuJf+UUySY=

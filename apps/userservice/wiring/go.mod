@@ -13,7 +13,7 @@ replace github.com/vaastav/raglan/apps/userservice/workload => ../workload
 require (
 	github.com/blueprint-uservices/blueprint/blueprint v0.0.0-20260314172942-77bfbde575a7
 	github.com/blueprint-uservices/blueprint/plugins v0.0.0-20260314172942-77bfbde575a7
-	github.com/vaastav/raglan/plugins v0.0.0-20260428122744-a06b6965a2ea
+	github.com/vaastav/raglan/plugins v0.0.0-20260429213125-ce5069d4908b
 )
 
 require (

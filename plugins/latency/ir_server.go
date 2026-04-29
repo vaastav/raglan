@@ -1,10 +1,7 @@
 package latency
 
 import (
-	"errors"
 	"fmt"
-	"path/filepath"
-	"runtime"
 	"strconv"
 
 	"github.com/blueprint-uservices/blueprint/blueprint/pkg/coreplugins/service"
@@ -65,20 +62,6 @@ func (node *PercentileLatencyServerWrapper) GenerateFuncs(builder golang.ModuleB
 	}
 
 	return nil
-}
-
-func (node *PercentileLatencyServerWrapper) AddToWorkspace(builder golang.WorkspaceBuilder) error {
-	// Add iridescent runtime to the workspace
-	_, filename, _, ok := runtime.Caller(0)
-	if !ok {
-		return errors.New("unable to get the current filename")
-	}
-
-	dirname := filepath.Dir(filename)
-	runtime_path := filepath.Join(dirname, "..", "..", "iridescent_rt")
-	runtime_path = filepath.Clean(runtime_path)
-	_, err := builder.AddLocalModule("iridescent_rt", runtime_path)
-	return err
 }
 
 func (node *PercentileLatencyServerWrapper) AddInstantiation(builder golang.NamespaceBuilder) error {
