@@ -84,7 +84,11 @@ func NewSpecializationRuntime(ctx context.Context, filename string) (*Specializa
 
 func buildModule(plugin_file string, orig_filename string, trampoline_filename string, spec_filename string) error {
 	cmd := exec.Command("go", "build", "-o", plugin_file, "-buildmode=plugin", orig_filename, trampoline_filename, spec_filename)
-	_, err := cmd.Output()
+	out, err := cmd.Output()
+	res := string(out)
+	if res != "" {
+		log.Println(res)
+	}
 	return err
 }
 
