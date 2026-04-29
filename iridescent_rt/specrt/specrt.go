@@ -9,6 +9,8 @@ import (
 	"path/filepath"
 	"plugin"
 	"strings"
+
+	"github.com/vaastav/raglan/iridescent_rt/pass"
 )
 
 type SpecializationRuntime struct {
@@ -23,6 +25,7 @@ type SpecializationRuntime struct {
 	Trampoline     string
 	Counter        int
 	CallbackFns    []func() error
+	Passes         []pass.SpecPass
 }
 
 func NewSpecializationRuntime(ctx context.Context, filename string) (*SpecializationRuntime, error) {
@@ -44,6 +47,7 @@ func NewSpecializationRuntime(ctx context.Context, filename string) (*Specializa
 		log.Println(pt.String())
 		spec_rt.PtsMap[pt.Name] = pt
 	}
+	spec_rt.Pts = points
 	outf, err := setupOriginalModule(filename, global_fns)
 	if err != nil {
 		return nil, err
@@ -54,7 +58,7 @@ func NewSpecializationRuntime(ctx context.Context, filename string) (*Specializa
 		return nil, err
 	}
 	spec_rt.Trampoline = trampoline
-	specialized, err := setupSpecializedModule(filename, global_fns, points)
+	specialized, err := spec_rt.setupSpecializedModule(filename)
 	if err != nil {
 		return nil, err
 	}
@@ -69,7 +73,6 @@ func NewSpecializationRuntime(ctx context.Context, filename string) (*Specializa
 	if err != nil {
 		return nil, err
 	}
-	spec_rt.Pts = points
 	spec_rt.OriginalModule = p
 	return spec_rt, nil
 }
@@ -81,7 +84,7 @@ func buildModule(plugin_file string, orig_filename string, trampoline_filename s
 }
 
 func (srt *SpecializationRuntime) UpdatePlugin() error {
-	specialized, err := setupSpecializedModule(srt.Filename, srt.GlobalFns, srt.Pts)
+	specialized, err := srt.setupSpecializedModule(srt.Filename)
 	if err != nil {
 		return err
 	}
@@ -132,4 +135,8 @@ func (srt *SpecializationRuntime) Instrument(name string, key int) {
 	if pt, ok := srt.PtsMap[name]; ok {
 		pt.Incr(key)
 	}
+}
+
+func (srt *SpecializationRuntime) AddSpecializationPass(p pass.SpecPass) {
+	srt.Passes = append(srt.Passes, p)
 }

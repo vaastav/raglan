@@ -48,7 +48,8 @@ type UserServiceImpl struct {
 
 func NewUserServieImpl(ctx context.Context, nadb backend.NoSQLDatabase, eudb backend.NoSQLDatabase, apdb backend.NoSQLDatabase, sadb backend.NoSQLDatabase, afdb backend.NoSQLDatabase, ocdb backend.NoSQLDatabase) (UserService, error) {
 	impl := &UserServiceImpl{NaDB: nadb, EuDB: eudb, ApDB: apdb, SaDB: sadb, AfDB: afdb, OcDB: ocdb}
-	go impl.init_service()
+	// Wait for initialization to complete!
+	impl.init_service()
 	return impl, nil
 }
 

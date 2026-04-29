@@ -17,7 +17,7 @@ func isIridescentAnnotationCallExpr(expr *ast.CallExpr) bool {
 	return false
 }
 
-func setupSpecializedModule(filename string, global_fns map[string]bool, spec_points []*CompileTimeSpecPoint[any]) (string, error) {
+func (srt *SpecializationRuntime) setupSpecializedModule(filename string) (string, error) {
 	fset := token.NewFileSet()
 	file, err := parser.ParseFile(fset, filename, nil, 0)
 	if err != nil {
@@ -26,7 +26,7 @@ func setupSpecializedModule(filename string, global_fns map[string]bool, spec_po
 
 	ast.Inspect(file, func(n ast.Node) bool {
 		if fn, ok := n.(*ast.FuncDecl); ok {
-			if _, ok2 := global_fns[fn.Name.Name]; ok2 {
+			if _, ok2 := srt.GlobalFns[fn.Name.Name]; ok2 {
 				var newStatements []ast.Stmt
 				for _, stmt := range fn.Body.List {
 					switch s := stmt.(type) {
@@ -62,7 +62,7 @@ func setupSpecializedModule(filename string, global_fns map[string]bool, spec_po
 		return true
 	})
 
-	for _, pt := range spec_points {
+	for _, pt := range srt.Pts {
 		if pt.IsSpecialized {
 			ast.Inspect(file, func(n ast.Node) bool {
 				if fn, ok := n.(*ast.FuncDecl); ok && fn.Name.Name == pt.ParentFn {
@@ -81,12 +81,17 @@ func setupSpecializedModule(filename string, global_fns map[string]bool, spec_po
 	}
 	ast.Inspect(file, func(n ast.Node) bool {
 		if fn, ok := n.(*ast.FuncDecl); ok {
-			if _, ok2 := global_fns[fn.Name.Name]; ok2 {
+			if _, ok2 := srt.GlobalFns[fn.Name.Name]; ok2 {
 				fn.Name = ast.NewIdent(fn.Name.Name + "_Specialized")
 			}
 		}
 		return true
 	})
+
+	// Apply custom specialization passes
+	for _, pass := range srt.Passes {
+		file = pass.Modify(fset, file)
+	}
 
 	new_file := strings.ReplaceAll(filename, ".go", "_specialized.go")
 	f, err := os.Create(new_file)
