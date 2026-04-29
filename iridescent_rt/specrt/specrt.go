@@ -70,7 +70,7 @@ func NewSpecializationRuntime(ctx context.Context, filename string) (*Specializa
 	spec_rt.OrigPluginFile = plugin_file
 	err = buildModule(plugin_file, outf, trampoline, specialized)
 	if err != nil {
-		log.Println("Failed to build module")
+		log.Println("Failed to build module with error: ", err)
 		return nil, err
 	}
 	p, err := plugin.Open(plugin_file)
