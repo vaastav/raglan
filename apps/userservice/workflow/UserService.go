@@ -110,10 +110,11 @@ func (u *UserServiceImpl) Policy() {
 		sort.SliceStable(indices, func(i, j int) bool {
 			return pt.Counter[indices[i]] > pt.Counter[indices[j]]
 		})
-		log.Println("Selected Order:", indices)
-		u.Pass.SetOrder("userinfo", indices)
 		// Reset the stats for this point
 		pt.ResetStats()
+		// Set the order
+		log.Println("Selected Order:", indices)
+		u.Pass.SetOrder("userinfo", indices)
 		// Update the plugin
 		err := rt.UpdatePlugin()
 		if err != nil {

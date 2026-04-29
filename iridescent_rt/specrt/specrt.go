@@ -68,7 +68,7 @@ func NewSpecializationRuntime(ctx context.Context, filename string) (*Specializa
 	plugin_file := filepath.Dir(outf) + "/module.so"
 	spec_rt.PluginFile = plugin_file
 	spec_rt.OrigPluginFile = plugin_file
-	err = buildModule(plugin_file, outf, trampoline, specialized)
+	err = spec_rt.buildModule(plugin_file, outf, trampoline, specialized)
 	if err != nil {
 		log.Println("Failed to build module with error: ", err)
 		return nil, err
@@ -83,7 +83,11 @@ func NewSpecializationRuntime(ctx context.Context, filename string) (*Specializa
 	return spec_rt, nil
 }
 
-func buildModule(plugin_file string, orig_filename string, trampoline_filename string, spec_filename string) error {
+func (srt *SpecializationRuntime) buildModule(plugin_file string, orig_filename string, trampoline_filename string, spec_filename string) error {
+	version_filename := filepath.Dir(plugin_file) + fmt.Sprintf("version%d.go", srt.Counter)
+	f, err := os.Create(version_filename)
+	defer f.Close()
+	f.WriteString(fmt.Sprintf("package main\n\nvar version string=\"v%d\"\n", srt.Counter))
 	cmd := exec.Command("go", "build", "-o", plugin_file, "-buildmode=plugin", orig_filename, trampoline_filename, spec_filename)
 	cmd.Dir = filepath.Dir(plugin_file)
 	out, err := cmd.CombinedOutput()
@@ -107,7 +111,7 @@ func (srt *SpecializationRuntime) UpdatePlugin() error {
 	srt.Counter += 1
 	plugin_file := strings.ReplaceAll(srt.OrigPluginFile, "module.so", fmt.Sprintf("module_%d.so", srt.Counter))
 	srt.PluginFile = plugin_file
-	err = buildModule(plugin_file, srt.Original, srt.Trampoline, specialized)
+	err = srt.buildModule(plugin_file, srt.Original, srt.Trampoline, specialized)
 	if err != nil {
 		return err
 	}
