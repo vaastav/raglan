@@ -4,9 +4,12 @@ import (
 	"context"
 	"errors"
 	"log"
+	"sort"
+	"time"
 
 	"github.com/blueprint-uservices/blueprint/runtime/core/backend"
 	"github.com/vaastav/raglan/iridescent_rt/autotune"
+	"github.com/vaastav/raglan/iridescent_rt/pass"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -44,6 +47,7 @@ type UserServiceImpl struct {
 	OcDB          backend.NoSQLDatabase
 	Fn            func(ctx context.Context, u *UserServiceImpl, username string) (Info, error)
 	IsInitialized bool
+	Pass          *pass.ReorderIfPass
 }
 
 func NewUserServieImpl(ctx context.Context, nadb backend.NoSQLDatabase, eudb backend.NoSQLDatabase, apdb backend.NoSQLDatabase, sadb backend.NoSQLDatabase, afdb backend.NoSQLDatabase, ocdb backend.NoSQLDatabase) (UserService, error) {
@@ -81,9 +85,40 @@ func (u *UserServiceImpl) init_service() {
 			log.Fatal(err)
 		}
 		rt.SpecRT.AddCallbackFn(update_fn)
+		// Add a custom if reorder pass
+		p := pass.NewReorderIfPass()
+		rt.SpecRT.AddSpecializationPass(p)
+		go u.Policy()
+		u.Pass = p
 	}
 	log.Println("Service initialization complete")
 	u.IsInitialized = true
+}
+
+func (u *UserServiceImpl) Policy() {
+	rt := autotune.GetRuntime().SpecRT
+	pt := rt.PtsMap["userinfo"]
+	for {
+		// Sleep for 5 seconds
+		time.Sleep(5 * time.Second)
+		// Update the if-else reorder
+		indices := make([]int, len(pt.Counter))
+		for i := range indices {
+			indices[i] = i
+		}
+		sort.Slice(indices, func(i, j int) bool {
+			return pt.Counter[indices[i]] > pt.Counter[indices[j]]
+		})
+		log.Println("Selected Order:", indices)
+		u.Pass.SetOrder("userinfo", indices)
+		// Reset the stats for this point
+		pt.ResetStats()
+		// Update the plugin
+		err := rt.UpdatePlugin()
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
 }
 
 func (u *UserServiceImpl) RegsiterUser(ctx context.Context, username string, fname string, lname string, password string, userID int64, email string, address string, country string) error {
