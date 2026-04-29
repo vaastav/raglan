@@ -106,7 +106,7 @@ func (u *UserServiceImpl) Policy() {
 		for i := range indices {
 			indices[i] = i
 		}
-		sort.Slice(indices, func(i, j int) bool {
+		sort.SliceStable(indices, func(i, j int) bool {
 			return pt.Counter[indices[i]] > pt.Counter[indices[j]]
 		})
 		log.Println("Selected Order:", indices)

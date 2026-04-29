@@ -4,7 +4,7 @@ go 1.22.1
 
 require (
 	github.com/blueprint-uservices/blueprint/runtime v0.0.0-20260314172942-77bfbde575a7
-	github.com/vaastav/raglan/iridescent_rt v0.0.0-20260428122744-a06b6965a2ea
+	github.com/vaastav/raglan/iridescent_rt v0.0.0-20260429084433-7a131b959cd4
 	go.mongodb.org/mongo-driver v1.15.0
 )
 
