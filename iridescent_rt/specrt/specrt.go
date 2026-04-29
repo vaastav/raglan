@@ -84,7 +84,7 @@ func NewSpecializationRuntime(ctx context.Context, filename string) (*Specializa
 }
 
 func (srt *SpecializationRuntime) buildModule(plugin_file string, orig_filename string, trampoline_filename string, spec_filename string) error {
-	version_filename := filepath.Dir(plugin_file) + fmt.Sprintf("version%d.go", srt.Counter)
+	version_filename := filepath.Dir(plugin_file) + fmt.Sprintf("/version%d.go", srt.Counter)
 	f, err := os.Create(version_filename)
 	defer f.Close()
 	f.WriteString(fmt.Sprintf("package main\n\nvar version string=\"v%d\"\n", srt.Counter))
