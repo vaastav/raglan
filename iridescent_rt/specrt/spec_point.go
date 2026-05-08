@@ -9,6 +9,7 @@ type SpecPointEnum int
 
 const (
 	CompileTime SpecPointEnum = iota
+	CodeGenPointArr
 	Knob
 )
 
@@ -67,6 +68,38 @@ func (sp *CompileTimeSpecPoint[T]) NumVals() int {
 
 func (sp *CompileTimeSpecPoint[T]) Type() SpecPointEnum {
 	return CompileTime
+}
+
+type CodeGenPointArrSpecPoint[T comparable] struct {
+	Name     string
+	Values   [][]T
+	Default  []T
+	Current  []T
+	SetValFn func(val []T)
+}
+
+func NewCodeGenPointArrSpecPoint[T comparable](name string, values [][]T, default_val []T, SetValFn func([]T)) *CodeGenPointArrSpecPoint[T] {
+	s := &CodeGenPointArrSpecPoint[T]{Name: name, Values: values, Default: default_val, Current: default_val, SetValFn: SetValFn}
+	s.SetValFn(s.Current)
+	return s
+}
+
+func (sp *CodeGenPointArrSpecPoint[T]) Specialize(index int) {
+	sp.Current = sp.Values[index]
+	sp.SetValFn(sp.Current)
+}
+
+func (sp *CodeGenPointArrSpecPoint[T]) Type() SpecPointEnum {
+	return CodeGenPointArr
+}
+
+func (sp *CodeGenPointArrSpecPoint[T]) NumVals() int {
+	return len(sp.Values)
+}
+
+func (sp *CodeGenPointArrSpecPoint[T]) String() string {
+	s := sp.Name + ", values: " + fmt.Sprintf("%v", sp.Values) + ", default: " + fmt.Sprintf("%v", sp.Default) + ", current: " + fmt.Sprintf("%v", sp.Current)
+	return s
 }
 
 type KnobSpecPoint[T comparable] struct {
