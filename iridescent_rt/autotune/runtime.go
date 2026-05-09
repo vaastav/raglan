@@ -88,6 +88,6 @@ func (irid *IridescentRT) RegisterCompileTimeSpecPoint(name string, sp *specrt.C
 	rt.AllPoints[name] = sp
 }
 
-func (irid *IridescentRT) RegisterCodeGenArrSpecPoint(name string, sp *specrt.CodeGenPointArrSpecPoint[any]) {
+func (irid *IridescentRT) RegisterCustomSpecPoint(name string, sp specrt.SpecializationPoint) {
 	rt.AllPoints[name] = sp
 }
