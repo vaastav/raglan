@@ -87,3 +87,7 @@ func (irid *IridescentRT) RegisterKnob(name string, sp *specrt.KnobSpecPoint[any
 func (irid *IridescentRT) RegisterCompileTimeSpecPoint(name string, sp *specrt.CompileTimeSpecPoint[any]) {
 	rt.AllPoints[name] = sp
 }
+
+func (irid *IridescentRT) RegisterCodeGenArrSpecPoint(name string, sp *specrt.CodeGenPointArrSpecPoint[any]) {
+	rt.AllPoints[name] = sp
+}
