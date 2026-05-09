@@ -18,6 +18,8 @@ type SpecializationPoint interface {
 	String() string
 	Type() SpecPointEnum
 	NumVals() int
+	GetName() string
+	Incr(key int)
 }
 
 type CompileTimeSpecPoint[T comparable] struct {
@@ -70,6 +72,10 @@ func (sp *CompileTimeSpecPoint[T]) Type() SpecPointEnum {
 	return CompileTime
 }
 
+func (sp *CompileTimeSpecPoint[T]) GetName() string {
+	return sp.Name
+}
+
 type CodeGenPointArrSpecPoint[T comparable] struct {
 	Name     string
 	Values   [][]T
@@ -100,6 +106,12 @@ func (sp *CodeGenPointArrSpecPoint[T]) NumVals() int {
 func (sp *CodeGenPointArrSpecPoint[T]) String() string {
 	s := sp.Name + ", values: " + fmt.Sprintf("%v", sp.Values) + ", default: " + fmt.Sprintf("%v", sp.Default) + ", current: " + fmt.Sprintf("%v", sp.Current)
 	return s
+}
+
+func (sp *CodeGenPointArrSpecPoint[T]) Incr(key int) { /* Not implemented*/ }
+
+func (sp *CodeGenPointArrSpecPoint[T]) GetName() string {
+	return sp.Name
 }
 
 type KnobSpecPoint[T comparable] struct {
@@ -133,3 +145,9 @@ func (sp *KnobSpecPoint[T]) Type() SpecPointEnum {
 func (sp *KnobSpecPoint[T]) NumVals() int {
 	return len(sp.Values)
 }
+
+func (sp *KnobSpecPoint[T]) GetName() string {
+	return sp.Name
+}
+
+func (sp *KnobSpecPoint[T]) Incr(key int) { /* Not implemented */ }

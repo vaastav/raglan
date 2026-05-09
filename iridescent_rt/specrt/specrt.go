@@ -2,6 +2,7 @@ package specrt
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -16,8 +17,8 @@ import (
 type SpecializationRuntime struct {
 	Filename       string
 	OriginalModule *plugin.Plugin
-	Pts            []*CompileTimeSpecPoint[any]
-	PtsMap         map[string]*CompileTimeSpecPoint[any]
+	Pts            []SpecializationPoint
+	PtsMap         map[string]SpecializationPoint
 	GlobalFns      map[string]bool
 	PluginFile     string
 	OrigPluginFile string
@@ -31,7 +32,7 @@ type SpecializationRuntime struct {
 func NewSpecializationRuntime(ctx context.Context, filename string) (*SpecializationRuntime, error) {
 	spec_rt := &SpecializationRuntime{}
 	spec_rt.Filename = filename
-	spec_rt.PtsMap = make(map[string]*CompileTimeSpecPoint[any])
+	spec_rt.PtsMap = make(map[string]SpecializationPoint)
 	// Parse file to find specialization points!
 	points, err := parseOriginalModule(filename)
 	if err != nil {
@@ -45,9 +46,9 @@ func NewSpecializationRuntime(ctx context.Context, filename string) (*Specializa
 	log.Println("Found the following specialization points")
 	for _, pt := range points {
 		log.Println(pt.String())
-		spec_rt.PtsMap[pt.Name] = pt
+		spec_rt.PtsMap[pt.GetName()] = pt
+		spec_rt.Pts = append(spec_rt.Pts, pt)
 	}
-	spec_rt.Pts = points
 	outf, err := setupOriginalModule(filename, global_fns)
 	if err != nil {
 		log.Println("Failed to setup original module")
@@ -155,4 +156,13 @@ func (srt *SpecializationRuntime) Instrument(name string, key int) {
 
 func (srt *SpecializationRuntime) AddSpecializationPass(p pass.SpecPass) {
 	srt.Passes = append(srt.Passes, p)
+}
+
+func (srt *SpecializationRuntime) AddSpecPoint(name string, pt SpecializationPoint) error {
+	if v, ok := srt.PtsMap[name]; ok {
+		return errors.New("Point with name " + v.GetName() + " already exists as a specializaton point")
+	}
+	srt.PtsMap[name] = pt
+	srt.Pts = append(srt.Pts, pt)
+	return nil
 }
