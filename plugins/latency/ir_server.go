@@ -86,3 +86,78 @@ func (node *PercentileLatencyServerWrapper) AddInstantiation(builder golang.Name
 	}
 	return builder.DeclareConstructor(node.InstanceName, constructor, []ir.IRNode{node.Wrapped})
 }
+
+type AverageLatencyServerWrapper struct {
+	golang.Service
+	golang.GeneratesFuncs
+	golang.Instantiable
+
+	InstanceName string
+	Wrapped      golang.Service
+
+	outputPackage string
+}
+
+func (node *AverageLatencyServerWrapper) ImplementsGolangNode() {}
+
+func (node *AverageLatencyServerWrapper) Name() string {
+	return node.InstanceName
+}
+
+func (node *AverageLatencyServerWrapper) String() string {
+	return node.Name() + " = AverageLatencyServerWrapper(" + node.Wrapped.Name() + ")"
+}
+
+func (node *AverageLatencyServerWrapper) AddInterfaces(builder golang.ModuleBuilder) error {
+	return node.Wrapped.AddInterfaces(builder)
+}
+
+func newAverageLatencyServerWrapper(name string, server golang.Service) (*AverageLatencyServerWrapper, error) {
+	node := &AverageLatencyServerWrapper{}
+	node.InstanceName = name
+	node.Wrapped = server
+	node.outputPackage = "latency"
+
+	return node, nil
+}
+
+func (node *AverageLatencyServerWrapper) GetInterface(ctx ir.BuildContext) (service.ServiceInterface, error) {
+	return node.Wrapped.GetInterface(ctx)
+}
+
+func (node *AverageLatencyServerWrapper) GenerateFuncs(builder golang.ModuleBuilder) error {
+	service, err := golang.GetGoInterface(builder, node.Wrapped)
+	if err != nil {
+		return err
+	}
+
+	err = generateAvgServerHandler(builder, service, node.outputPackage)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (node *AverageLatencyServerWrapper) AddInstantiation(builder golang.NamespaceBuilder) error {
+	if builder.Visited(node.InstanceName) {
+		return nil
+	}
+
+	iface, err := golang.GetGoInterface(builder, node.Wrapped)
+	if err != nil {
+		return err
+	}
+
+	constructor := &gocode.Constructor{
+		Package: builder.Module().Info().Name + "/" + node.outputPackage,
+		Func: gocode.Func{
+			Name: fmt.Sprintf("New_%v_AverageLatencyHandler", iface.BaseName),
+			Arguments: []gocode.Variable{
+				{Name: "ctx", Type: &gocode.UserType{Package: "context", Name: "Context"}},
+				{Name: "service", Type: iface},
+			},
+		},
+	}
+	return builder.DeclareConstructor(node.InstanceName, constructor, []ir.IRNode{node.Wrapped})
+}

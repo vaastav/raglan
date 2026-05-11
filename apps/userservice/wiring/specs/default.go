@@ -22,7 +22,7 @@ var Default = cmdbuilder.SpecOption{
 }
 
 func applyHTTPDefaults(spec wiring.WiringSpec, serviceName, proc_name, ctrName string) string {
-	latency.AddLatencyMeter(spec, serviceName, 50.0)
+	latency.AddAverageLatencyMeter(spec, serviceName)
 	http.Deploy(spec, serviceName)
 	iridescent.AddIridescent(spec, proc_name, "20s", "2s", "linear", "/src/"+proc_name+"/workflow/guest/db.go")
 	goproc.CreateProcess(spec, proc_name, serviceName)
