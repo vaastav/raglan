@@ -65,7 +65,7 @@ func (e *ExplorationEngine) StartExploration() {
 				e.CurConfig += 1
 				c := e.Strat.NextConfig()
 				c.Id = e.CurConfig
-				log.Println("Selected Config ", *c)
+				log.Println("Selected Config", c.Id, ":", c.Mappings)
 				// Set the configuration
 				e.SelectConfig(c)
 				time.Sleep(e.Period)
@@ -106,6 +106,7 @@ func (e *ExplorationEngine) Finalize() error {
 	// Select the best configuration
 	highest_idx := uint64(0)
 	highest_val := uint64(0)
+	log.Println("Scores: ", e.ConfigScores)
 	for k, v := range e.ConfigScores {
 		if v > highest_val {
 			highest_val = v
