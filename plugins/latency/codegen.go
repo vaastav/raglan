@@ -26,10 +26,10 @@ func generateServerHandler(builder golang.ModuleBuilder, wrapped_service *gocode
 		Percentile: percentile,
 	}
 
-	server.Imports.AddPackages("context", "time", "fmt", "github.com/vaastav/raglan/iridescent_rt/autotune", "github.com/caio/go-tdigest/v5", "math")
+	server.Imports.AddPackages("context", "time", "github.com/vaastav/raglan/iridescent_rt/autotune", "github.com/caio/go-tdigest/v5", "math")
 
-	slog.Info(fmt.Sprintf("Generating %v/%v", server.Package.PackageName, wrapped_service.Name))
-	outputFile := filepath.Join(server.Package.Path, wrapped_service.Name+".go")
+	slog.Info(fmt.Sprintf("Generating %v/%v", server.Package.PackageName, server.Name))
+	outputFile := filepath.Join(server.Package.Path, server.Name+".go")
 	return gogen.ExecuteTemplateToFile("PercentileLatency", serverTemplate, server, outputFile)
 }
 
@@ -66,11 +66,11 @@ func (handler *{{.Name}}) MeasureLat() autotune.Stats {
 	lat := uint64(handler.td.Quantile({{.Percentile}}))
 	stats := autotune.Stats{Values: make(map[string]uint64)}
 	stats.Values["per_lat"] = math.MaxUint64 - lat
-	handler.td, _ = td.New() // Reset the digest!
+	handler.td, _ = tdigest.New() // Reset the digest!
 	return stats
 }
 
-func (handler *{{.Name}}) Objective(s Stats) uint64 {
+func (handler *{{.Name}}) Objective(s autotune.Stats) uint64 {
 	return s.Values["per_lat"]
 }
 
