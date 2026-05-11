@@ -1,6 +1,7 @@
 package autotune
 
 import (
+	"log"
 	"time"
 
 	"github.com/vaastav/raglan/iridescent_rt/specrt"
@@ -64,6 +65,7 @@ func (e *ExplorationEngine) StartExploration() {
 				e.CurConfig += 1
 				c := e.Strat.NextConfig()
 				c.Id = e.CurConfig
+				log.Println("Selected Config ", *c)
 				// Set the configuration
 				e.SelectConfig(c)
 				time.Sleep(e.Period)
@@ -71,6 +73,7 @@ func (e *ExplorationEngine) StartExploration() {
 				stats := e.Measure()
 				obj := e.Objective(stats)
 				e.ConfigScores[c.Id] = obj
+				e.Configs[c.Id] = c
 			}
 		}
 
@@ -110,6 +113,7 @@ func (e *ExplorationEngine) Finalize() error {
 		}
 	}
 	chosen_config := e.Configs[highest_idx]
+	log.Println("Finalizing Config: ", *chosen_config)
 	return e.SelectConfig(chosen_config)
 }
 
