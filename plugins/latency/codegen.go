@@ -83,7 +83,7 @@ func (handler *{{.Name}}) AddSample(d time.Duration) {
 {{ range $_, $f := .Service.Methods }}
 func (handler *{{$receiver}}) {{$f.Name -}} ({{ArgVarsAndTypes $f "ctx context.Context"}}) ({{RetVarsAndTypes $f "err error"}}) {
 	start := time.Now()
-	{{RetVars $f "err"}} = handler.{{$f.Name}}({{ArgVars $f "ctx"}})
+	{{RetVars $f "err"}} = handler.Service.{{$f.Name}}({{ArgVars $f "ctx"}})
 	end := time.Now()
 	elapsed := end.Sub(start)
 	handler.AddSample(elapsed)
