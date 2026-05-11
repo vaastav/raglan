@@ -10,6 +10,7 @@ import (
 	"github.com/blueprint-uservices/blueprint/runtime/core/backend"
 	"github.com/vaastav/raglan/iridescent_rt/autotune"
 	"github.com/vaastav/raglan/iridescent_rt/pass"
+	"github.com/vaastav/raglan/iridescent_rt/specrt"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -98,7 +99,8 @@ func (u *UserServiceImpl) init_service() {
 
 func (u *UserServiceImpl) Policy() {
 	rt := autotune.GetRuntime().SpecRT
-	pt := rt.PtsMap["userinfo"]
+	pt_iface := rt.PtsMap["userinfo"]
+	pt, _ := pt_iface.(*specrt.CompileTimeSpecPoint[int])
 	for {
 		// Sleep for 5 seconds
 		time.Sleep(5 * time.Second)

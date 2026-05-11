@@ -26,7 +26,7 @@ func generateServerHandler(builder golang.ModuleBuilder, wrapped_service *gocode
 		Percentile: percentile,
 	}
 
-	server.Imports.AddPackages("context", "time", "fmt", "github.com/vaastav/raglan/iridescent_rt/autotune", "github.com/caio/go-tdigest/v5")
+	server.Imports.AddPackages("context", "time", "fmt", "github.com/vaastav/raglan/iridescent_rt/autotune", "github.com/caio/go-tdigest/v5", "math")
 
 	slog.Info(fmt.Sprintf("Generating %v/%v", server.Package.PackageName, wrapped_service.Name))
 	outputFile := filepath.Join(server.Package.Path, wrapped_service.Name+".go")
@@ -57,7 +57,6 @@ func New_{{.Name}}(ctx context.Context, service {{.Imports.NameOf .Service.UserT
 	handler := &{{.Name}}{}
 	handler.Service = service
 	handler.td, _ = tdigest.New()
-	autotune.GetRuntime().RegisterMeasurementFn(handler.MeasureLatency)
 	autotune.GetRuntime().RegisterMeasurementFn(handler.MeasureLat)
 	autotune.GetRuntime().RegisterObjFn(handler.Objective)
 	return handler, nil
@@ -66,7 +65,7 @@ func New_{{.Name}}(ctx context.Context, service {{.Imports.NameOf .Service.UserT
 func (handler *{{.Name}}) MeasureLat() autotune.Stats {
 	lat := uint64(handler.td.Quantile({{.Percentile}}))
 	stats := autotune.Stats{Values: make(map[string]uint64)}
-	stats.Values["per_lat"] = lat
+	stats.Values["per_lat"] = math.MaxUint64 - lat
 	handler.td, _ = td.New() // Reset the digest!
 	return stats
 }
@@ -82,12 +81,13 @@ func (handler *{{.Name}}) AddSample(d time.Duration) {
 {{$service := .Service.Name -}}
 {{$receiver := .Name -}}
 {{ range $_, $f := .Service.Methods }}
-func (handler *{{receiver}}) {{$f.Name -}} ({{ArgVarsAndTypes $f "ctx context.Context"}}) ({{RetVarsAndTypes $f "error"}}) {
+func (handler *{{$receiver}}) {{$f.Name -}} ({{ArgVarsAndTypes $f "ctx context.Context"}}) ({{RetVarsAndTypes $f "err error"}}) {
 	start := time.Now()
-
+	{{RetVars $f "err"}} = handler.{{$f.Name}}({{ArgVars $f "ctx"}})
 	end := time.Now()
 	elapsed := end.Sub(start)
 	handler.AddSample(elapsed)
+	return
 }
 {{end}}
 `

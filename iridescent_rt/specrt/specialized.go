@@ -62,7 +62,11 @@ func (srt *SpecializationRuntime) setupSpecializedModule(filename string) (strin
 		return true
 	})
 
-	for _, pt := range srt.Pts {
+	for _, pt_if := range srt.Pts {
+		pt, ok := pt_if.(*CompileTimeSpecPoint[any])
+		if !ok {
+			continue
+		}
 		if pt.IsSpecialized {
 			ast.Inspect(file, func(n ast.Node) bool {
 				if fn, ok := n.(*ast.FuncDecl); ok && fn.Name.Name == pt.ParentFn {

@@ -12,6 +12,7 @@ import (
 	"github.com/vaastav/raglan/apps/userservice/workload/workloadgen"
 	"github.com/vaastav/raglan/plugins/iridescent"
 	"github.com/vaastav/raglan/plugins/iridlinuxcontainer"
+	"github.com/vaastav/raglan/plugins/latency"
 )
 
 var Default = cmdbuilder.SpecOption{
@@ -21,6 +22,7 @@ var Default = cmdbuilder.SpecOption{
 }
 
 func applyHTTPDefaults(spec wiring.WiringSpec, serviceName, proc_name, ctrName string) string {
+	latency.AddLatencyMeter(spec, serviceName, 50.0)
 	http.Deploy(spec, serviceName)
 	iridescent.AddIridescent(spec, proc_name, "20s", "2s", "linear", "/src/"+proc_name+"/workflow/guest/db.go")
 	goproc.CreateProcess(spec, proc_name, serviceName)
